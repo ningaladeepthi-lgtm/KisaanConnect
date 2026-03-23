@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Portal - KisanConnect</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="logo-icon">🌿</span>
+                <h2>KisanConnect</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-target="crops-view">
+                    <span class="nav-icon">🌾</span>
+                    <span data-i18n="menu_mycrops">My Crops</span>
+                </button>
+                <button class="nav-item" data-target="equipment-view">
+                    <span class="nav-icon">🚜</span>
+                    <span data-i18n="menu_equipment">Equipment</span>
+                </button>
+                <button class="nav-item" data-target="payment-view">
+                    <span class="nav-icon">💳</span>
+                    <span data-i18n="menu_payments">Payments</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="user-avatar-initial">R</div>
+                    <div class="user-info">
+                        <h4 id="user-display-name">Ramesh Kumar</h4>
+                        <p>Farmer • <span id="user-display-location">Pune</span></p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="window.location.href='index.html'" data-i18n="btn_logout">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="page-title" data-i18n="title_mycrops">My Crops</h1>
+                    <p id="page-subtitle" data-i18n="subtitle_mycrops">Manage your listings, bids, and get AI price estimates.</p>
+                </div>
+                <div class="header-actions" style="display: flex; gap: 1.5rem; align-items: center;">
+                    <select class="lang-selector" onchange="changeLanguage(this.value)" style="padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); background: var(--surface);">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                        <option value="te">తెలుగు</option>
+                    </select>
+                    <a href="index.html" data-i18n="nav_login" style="color: var(--text-muted); font-weight: 500; text-decoration: none;">Login</a>
+                    <span style="color: var(--border);">|</span>
+                    <button class="btn btn-primary" id="primary-action-btn" onclick="document.getElementById('crop-type').focus();" data-i18n="btn_listnew">+ List New Crop</button>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                
+                <!-- View: My Crops -->
+                <div id="crops-view" class="view-section active">
+                    
+                    <!-- AI Fair Price Meter Widget -->
+                    <div class="ai-widget fade-in">
+                        <div class="ai-header">
+                            <div class="ai-title">
+                                <span>🤖</span>
+                                <h3>AI Fair Price Meter</h3>
+                            </div>
+                            <span class="badge badge-ai">Live Market Data</span>
+                        </div>
+                        <div class="price-meters">
+                            <div class="meter-card">
+                                <span>Wheat</span>
+                                <h4>₹2,100 / Qtl</h4>
+                                <div class="trend positive">↑ 2.5%</div>
+                            </div>
+                            <div class="meter-card">
+                                <span>Soybean</span>
+                                <h4>₹4,600 / Qtl</h4>
+                                <div class="trend negative">↓ 1.2%</div>
+                            </div>
+                            <div class="meter-card">
+                                <span>Cotton</span>
+                                <h4>₹7,200 / Qtl</h4>
+                                <div class="trend positive">↑ 5.0%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- My Crops Sub-tabs -->
+                    <div class="crops-tabs mb-4 fade-in" style="display: flex; gap: 1.5rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; overflow-x: auto;">
+                        <button class="tab-btn active" onclick="switchCropTab('tab-list-crop', this)" data-i18n="tab_listcrop" style="background: none; border: none; font-weight: 600; color: var(--primary); padding: 0.5rem 0; cursor: pointer; border-bottom: 2px solid var(--primary); margin-bottom: -2px;">List Crop for Sale</button>
+                        <button class="tab-btn" onclick="switchCropTab('tab-wholesaler-bids', this)" data-i18n="tab_bids" style="background: none; border: none; font-weight: 500; color: var(--text-muted); padding: 0.5rem 0; cursor: pointer;">Wholesaler Bids</button>
+                        <button class="tab-btn" onclick="switchCropTab('tab-price-suggestions', this)" data-i18n="tab_pricesugg" style="background: none; border: none; font-weight: 500; color: var(--text-muted); padding: 0.5rem 0; cursor: pointer;">Price Suggestion Meter</button>
+                    </div>
+
+                    <!-- 1. List Crop For Sale Tab -->
+                    <div id="tab-list-crop" class="crop-tab-content">
+                        <!-- Add Crop Form -->
+                        <div class="add-crop-container mb-4 fade-in" style="background: white; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                            <h3 class="section-heading" data-i18n="add_crop">Add New Crop</h3>
+                            <form id="add-crop-form" novalidate>
+                                <div class="form-row mb-4" style="display: flex; gap: 1rem;">
+                                    <div class="input-group half" style="flex: 1;">
+                                        <label data-i18n="lbl_croptype">Crop Type</label>
+                                        <select id="crop-type" required>
+                                            <option value="">Select Crop</option>
+                                            <option value="Wheat">Wheat</option>
+                                            <option value="Soybean">Soybean</option>
+                                            <option value="Cotton">Cotton</option>
+                                            <option value="Rice">Rice</option>
+                                            <option value="Onion">Onion</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group half" style="flex: 1;">
+                                        <label data-i18n="lbl_qty">Quantity (in Quintals)</label>
+                                        <input type="number" id="crop-qty" placeholder="e.g. 50" min="1" required>
+                                    </div>
+                                </div>
+                                <div class="form-row mb-4" style="display: flex; gap: 1rem;">
+                                    <div class="input-group half" style="flex: 1;">
+                                        <label data-i18n="lbl_price">Expected Price (₹ / Qtl)</label>
+                                        <input type="number" id="crop-price" placeholder="e.g. 2100" min="1" required>
+                                    </div>
+                                    <div class="input-group half" style="flex: 1;">
+                                        <label data-i18n="lbl_quality">Quality</label>
+                                        <select id="crop-quality" required>
+                                            <option value="Premium">Premium</option>
+                                            <option value="Standard">Standard</option>
+                                            <option value="Average">Average</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="ai-evaluation hidden" id="ai-price-result" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: var(--radius-sm); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                                    <span id="ai-icon"></span> <span id="ai-text"></span>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" style="width: 100%;" data-i18n="btn_listcrop">List Crop for Sale</button>
+                            </form>
+                        </div>
+
+                        <!-- Listed Crops -->
+                        <h3 class="section-heading" data-i18n="active_listings">My Active Listings</h3>
+                        
+                        <div class="listings-grid" id="farmer-crops-grid">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- 2. Wholesaler Bids Tab -->
+                    <div id="tab-wholesaler-bids" class="crop-tab-content" style="display: none;">
+                        <h3 class="section-heading">Recent Bids on Your Crops</h3>
+                        <p class="text-muted mb-4">Review and accept offers made by verified wholesalers.</p>
+                        <div class="listings-grid" id="bids-grid">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- 3. Price Suggestion Meter Tab -->
+                    <div id="tab-price-suggestions" class="crop-tab-content" style="display: none;">
+                        <div class="suggestion-meter-card fade-in" style="background: white; padding: 2rem; border-radius: var(--radius-md); border: 1px solid var(--border); max-width: 600px;">
+                            <h3 style="margin-top: 0; color: var(--primary); margin-bottom: 0.5rem;">Market Price Suggestion Meter</h3>
+                            <p class="text-muted mb-4" style="line-height: 1.5;">Select a crop to see its current market value. Our AI will calculate an optimal selling price slightly below market bounds to guarantee faster sales (Approx 5% below average).</p>
+                            
+                            <div class="input-group mb-4">
+                                <label>Target Crop</label>
+                                <select id="suggestion-crop" onchange="calculatePriceSuggestion()" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                                    <option value="">Select Crop for Suggestion</option>
+                                    <option value="Wheat">Wheat</option>
+                                    <option value="Soybean">Soybean</option>
+                                    <option value="Cotton">Cotton</option>
+                                    <option value="Rice">Rice</option>
+                                    <option value="Onion">Onion</option>
+                                </select>
+                            </div>
+
+                            <div id="suggestion-result-box" style="display: none; background: #f8f9fa; padding: 1.5rem; border-radius: var(--radius-sm); border-left: 4px solid var(--primary);">
+                                <h4 id="sugg-market-price" style="margin-top: 0; font-size: 1.1rem; color: var(--text);">Current Market Price: ₹--</h4>
+                                <h2 id="sugg-optimal-price" style="color: var(--success); margin: 0.5rem 0;">Suggested Price: ~₹--/Qtl</h2>
+                                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0px;">*Listing at this expected price increases sales probability by 85%.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View: Equipment -->
+                <div id="equipment-view" class="view-section">
+                    
+                    <!-- Equipment Sub-tabs -->
+                    <div class="equipment-tabs mb-4 fade-in" style="display: flex; gap: 1.5rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; overflow-x: auto;">
+                        <button class="eq-btn active" onclick="switchEqTab('eq-browse', this)" style="background: none; border: none; font-weight: 600; color: var(--primary); padding: 0.5rem 0; cursor: pointer; border-bottom: 2px solid var(--primary); margin-bottom: -2px; white-space: nowrap;">Browse Equipment</button>
+                        <button class="eq-btn" onclick="switchEqTab('eq-list', this)" style="background: none; border: none; font-weight: 500; color: var(--text-muted); padding: 0.5rem 0; cursor: pointer; white-space: nowrap;">List My Equipment</button>
+                        <button class="eq-btn" onclick="switchEqTab('eq-requests', this)" style="background: none; border: none; font-weight: 500; color: var(--text-muted); padding: 0.5rem 0; cursor: pointer; white-space: nowrap;">Rental Requests</button>
+                        <button class="eq-btn" onclick="switchEqTab('eq-calendar', this)" style="background: none; border: none; font-weight: 500; color: var(--text-muted); padding: 0.5rem 0; cursor: pointer; white-space: nowrap;">Availability Calendar 🌟</button>
+                    </div>
+
+                    <!-- 1. Browse Equipment & Filter by Village -->
+                    <div id="eq-browse" class="eq-tab-content fade-in">
+                        <div class="search-filter-bar mb-4" style="background: white; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                            <div style="flex: 2; min-width: 200px;">
+                                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Search</label>
+                                <input type="text" placeholder="e.g. Tractor, Rotavator..." style="width: 100%; padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                            </div>
+                            <div style="flex: 1; min-width: 150px;">
+                                <label style="display: block; font-size: 0.85rem; color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">Filter by Village 📍</label>
+                                <select id="eq-search-village" style="width: 100%; padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--primary); background: #f0fdfa;">
+                                    <option value="">All Villages</option>
+                                    <optgroup label="Andhra Pradesh">
+                                        <option value="Vijayawada">Vijayawada</option>
+                                        <option value="Guntur">Guntur</option>
+                                        <option value="Nellore">Nellore</option>
+                                        <option value="Kurnool">Kurnool</option>
+                                        <option value="Rajahmundry">Rajahmundry</option>
+                                    </optgroup>
+                                    <optgroup label="Telangana">
+                                        <option value="Warangal">Warangal</option>
+                                        <option value="Karimnagar">Karimnagar</option>
+                                        <option value="Khammam">Khammam</option>
+                                        <option value="Nizamabad">Nizamabad</option>
+                                        <option value="Mahbubnagar">Mahbubnagar</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="eq-search-btn" style="height: 42px; padding: 0 1.5rem;">Search</button>
+                        </div>
+
+                        <div class="equipment-grid" id="equipment-browse-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- 2. List My Equipment -->
+                    <div id="eq-list" class="eq-tab-content hidden fade-in" style="display: none;">
+                        <div class="add-crop-container" style="background: white; padding: 2rem; border-radius: var(--radius-md); border: 1px solid var(--border); max-width: 600px;">
+                            <h3 style="margin-top: 0;">Add Equipment for Rent</h3>
+                            <p class="text-muted mb-4">Earn extra income by renting out your idle machinery to nearby farmers.</p>
+                            
+                            <form id="list-equipment-form" novalidate>
+                                <div class="input-group mb-3">
+                                    <label>Equipment Name</label>
+                                    <input type="text" id="eq-name" placeholder="e.g. John Deere 5310 Tractor" required>
+                                </div>
+                                <div class="form-row" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                    <div class="input-group half" style="flex: 1;">
+                                        <label>Category</label>
+                                        <select id="eq-category" required>
+                                            <option value="">Select Category</option>
+                                            <option value="Tractor">Tractor</option>
+                                            <option value="Harvester">Harvester</option>
+                                            <option value="Seeder">Seeder</option>
+                                            <option value="Sprayer">Sprayer</option>
+                                            <option value="Other Implement">Other Implement</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group half" style="flex: 1;">
+                                        <label>Rental Rate (₹/Hour)</label>
+                                        <input type="number" id="eq-rate" placeholder="e.g. 500" min="1" required>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-4">
+                                    <label>Conditions / Notes</label>
+                                    <input type="text" id="eq-notes" placeholder="e.g. Includes driver and fuel">
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">List Equipment</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 3. See Rental Requests -->
+                    <div id="eq-requests" class="eq-tab-content hidden fade-in" style="display: none;">
+                        <h3 class="section-heading">Incoming Rental Requests</h3>
+                        <p class="text-muted mb-4">Farmers in neighboring villages who want to rent your machinery.</p>
+                        
+                        <div class="request-card" style="background: white; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); border-left: 4px solid var(--primary); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div class="req-info">
+                                <h4 style="margin: 0 0 0.25rem 0;">Request for: Mahindra Tractor 575 DI</h4>
+                                <p style="margin: 0; color: var(--text-muted);">From: <strong>Sanjay Patil (📍 Shirur)</strong></p>
+                                <p style="margin: 0.25rem 0 0 0; color: var(--text); font-weight: 500;">Requested Dates: Oct 15 - Oct 16 (12 hours total)</p>
+                                <p style="margin: 0.25rem 0 0 0; color: var(--success); font-weight: 600;">Est. Earnings: ₹9,600</p>
+                            </div>
+                            <div class="req-actions" style="display: flex; flex-direction: column; gap: 0.5rem; min-width: 120px;">
+                                <button class="btn" style="background: var(--success); color: white; border: none; padding: 0.5rem; border-radius: 4px; font-weight: 600; cursor: pointer;" onclick="alert('Accepted! Calendar updated.'); this.parentElement.parentElement.remove();">Accept</button>
+                                <button class="btn" style="background: #f1f5f9; color: var(--text); border: 1px solid var(--border); padding: 0.5rem; border-radius: 4px; font-weight: 500; cursor: pointer;" onclick="this.parentElement.parentElement.remove();">Decline</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Availability Calendar (The Unique Feature) -->
+                    <div id="eq-calendar" class="eq-tab-content hidden fade-in" style="display: none;">
+                        <div style="background: white; padding: 2rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                                <div>
+                                    <h3 style="margin: 0 0 0.5rem 0; font-size: 1.5rem; color: var(--primary);">Equipment Availability Calendar</h3>
+                                    <p style="margin: 0; color: var(--text-muted); max-width: 600px; line-height: 1.5;">Select an equipment listing to instantly see which days it is booked and when it expects to be free. This prevents conflicts and guarantees fair scheduling!</p>
+                                </div>
+                                <div style="min-width: 250px;">
+                                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Select Equipment View:</label>
+                                    <select style="width: 100%; padding: 0.75rem; border-radius: var(--radius-sm); border: 2px solid var(--primary); font-weight: 600;">
+                                        <option>My Mahindra Tractor 575 DI</option>
+                                        <option>Amit's Swaraj 744 FE (External)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                                <span style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.85rem;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #dcfce7;"></div> Available</span>
+                                <span style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.85rem;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #fee2e2;"></div> Booked</span>
+                                <span style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.85rem;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #fef3c7;"></div> Maintenance</span>
+                            </div>
+
+                            <div class="calendar-placeholder" style="border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden;">
+                                <div class="cal-month" style="background: #f8fafc; padding: 1rem; text-align: center; font-weight: 700; border-bottom: 1px solid var(--border); font-size: 1.1rem;">October 2023</div>
+                                <div class="cal-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border);">
+                                    <!-- Weekdays -->
+                                    <div style="background: white; padding: 0.5rem; text-align: center; font-weight: 600; font-size: 0.8rem; color: var(--text-muted);">Sun</div>
+                                    <div style="background: white; padding: 0.5rem; text-align: center; font-weight: 600; font-size: 0.8rem; color: var(--text-muted);">Mon</div>
+                                    <div style="background: white; padding: 0.5rem; text-align: center; font-weight: 600; font-size: 0.8rem; color: var(--text-muted);">Tue</div>
+                                    <div style="background: white; padding: 0.5rem; text-align: center; font-weight: 600; font-size: 0.8rem; color: var(--text-muted);">Wed</div>
+                                    <div style="background: white; padding: 0.5rem; text-align: center; font-weight: 600; font-size: 0.8rem; color: var(--text-muted);">Thu</div>
+                                    <div style="background: white; padding: 0.5rem; text-align: center; font-weight: 600; font-size: 0.8rem; color: var(--text-muted);">Fri</div>
+                                    <div style="background: white; padding: 0.5rem; text-align: center; font-weight: 600; font-size: 0.8rem; color: var(--text-muted);">Sat</div>
+                                    
+                                    <!-- Days -->
+                                    <div style="background: #dcfce7; padding: 1.5rem 0; text-align: center; font-weight: 500; cursor: pointer;">1</div>
+                                    <div style="background: #dcfce7; padding: 1.5rem 0; text-align: center; font-weight: 500; cursor: pointer;">2</div>
+                                    <div style="background: #dcfce7; padding: 1.5rem 0; text-align: center; font-weight: 500; cursor: pointer;">3</div>
+                                    <div style="background: #fee2e2; padding: 1.5rem 0; text-align: center; font-weight: 500; color: #991b1b; cursor: not-allowed;" title="Booked by Ramesh">4</div>
+                                    <div style="background: #fee2e2; padding: 1.5rem 0; text-align: center; font-weight: 500; color: #991b1b; cursor: not-allowed;" title="Booked by Ramesh">5</div>
+                                    <div style="background: #fee2e2; padding: 1.5rem 0; text-align: center; font-weight: 500; color: #991b1b; cursor: not-allowed;" title="Booked by Ramesh">6</div>
+                                    <div style="background: #dcfce7; padding: 1.5rem 0; text-align: center; font-weight: 500; cursor: pointer;">7</div>
+                                    <!-- Row 2 -->
+                                    <div style="background: #dcfce7; padding: 1.5rem 0; text-align: center; font-weight: 500; cursor: pointer;">8</div>
+                                    <div style="background: #dcfce7; padding: 1.5rem 0; text-align: center; font-weight: 500; cursor: pointer;">9</div>
+                                    <div style="background: #dcfce7; padding: 1.5rem 0; text-align: center; font-weight: 500; cursor: pointer;">10</div>
+                                    <div style="background: #dcfce7; padding: 1.5rem 0; text-align: center; font-weight: 500; cursor: pointer;">11</div>
+                                    <div style="background: #dcfce7; padding: 1.5rem 0; text-align: center; font-weight: 500; cursor: pointer;">12</div>
+                                    <div style="background: #fef3c7; padding: 1.5rem 0; text-align: center; font-weight: 500; color: #92400e; cursor: not-allowed;" title="Maintenance">13</div>
+                                    <div style="background: #dcfce7; padding: 1.5rem 0; text-align: center; font-weight: 500; cursor: pointer;">14</div>
+                                    <!-- Row 3 -->
+                                    <div style="background: #fee2e2; padding: 1.5rem 0; text-align: center; font-weight: 500; color: #991b1b; border: 2px solid var(--primary);">15</div>
+                                    <div style="background: #fee2e2; padding: 1.5rem 0; text-align: center; font-weight: 500; color: #991b1b; border: 2px solid var(--primary);">16</div>
+                                    <div style="background: white; padding: 1.5rem 0; text-align: center; color: var(--text-muted);">17</div>
+                                    <div style="background: white; padding: 1.5rem 0; text-align: center; color: var(--text-muted);">18</div>
+                                    <div style="background: white; padding: 1.5rem 0; text-align: center; color: var(--text-muted);">19</div>
+                                    <div style="background: white; padding: 1.5rem 0; text-align: center; color: var(--text-muted);">20</div>
+                                    <div style="background: white; padding: 1.5rem 0; text-align: center; color: var(--text-muted);">21</div>
+                                </div>
+                            </div>
+                            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">* Dates with the blue border (15th, 16th) represent the pending request from Sanjay Patil.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- View: Payments -->
+                <div id="payment-view" class="view-section">
+                    
+                    <!-- Payment Sub-tabs -->
+                    <div class="payment-tabs mb-4 fade-in" style="display: flex; gap: 1.5rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; overflow-x: auto;">
+                        <button class="pay-btn active" onclick="switchPaymentTab('pay-settings', this)" style="background: none; border: none; font-weight: 600; color: var(--primary); padding: 0.5rem 0; cursor: pointer; border-bottom: 2px solid var(--primary); margin-bottom: -2px; white-space: nowrap;">Settings & Balance</button>
+                        <button class="pay-btn" onclick="switchPaymentTab('pay-crops', this)" style="background: none; border: none; font-weight: 500; color: var(--text-muted); padding: 0.5rem 0; cursor: pointer; white-space: nowrap;">Crop Sales (Wholesalers)</button>
+                        <button class="pay-btn" onclick="switchPaymentTab('pay-equipment', this)" style="background: none; border: none; font-weight: 500; color: var(--text-muted); padding: 0.5rem 0; cursor: pointer; white-space: nowrap;">Equipment Rentals</button>
+                    </div>
+
+                    <!-- 1. Settings & Balance -->
+                    <div id="pay-settings" class="pay-tab-content fade-in">
+                        <div class="payment-dashboard" style="display: grid; grid-template-columns: 320px 1fr; gap: 2rem; align-items: start;">
+                            <div class="balance-card">
+                                <h3>Total Earnings Balance</h3>
+                                <h2>₹1,06,600</h2>
+                                <button class="btn btn-light" style="width: 100%; margin-top: 1rem;">Withdraw to Bank</button>
+                            </div>
+                            
+                            <div style="background: white; padding: 2rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                                <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Collection Modes</h3>
+                                <p class="text-muted" style="margin-bottom: 1.5rem;">Choose how you want to be paid by buyers and renters.</p>
+                                
+                                <div style="display: grid; gap: 1rem;">
+                                    <div style="padding: 1.5rem; border: 2px solid var(--primary); border-radius: var(--radius-sm); background: #f0fdfa;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                            <h4 style="margin: 0; color: var(--primary-dark); display: flex; align-items: center; gap: 0.5rem;">📱 Online (UPI/QR) <span class="badge badge-success" style="font-size: 0.7rem;">Active</span></h4>
+                                            <input type="radio" name="pay-mode" checked style="transform: scale(1.5);">
+                                        </div>
+                                        <div class="input-group" style="margin-bottom: 0;">
+                                            <label>Your UPI ID or Phone Number</label>
+                                            <div style="display: flex; gap: 0.5rem;">
+                                                <input type="text" id="upi-input" value="9876543210@ybl" style="flex: 1;">
+                                                <button class="btn btn-primary" onclick="generateQR()">Generate QR</button>
+                                            </div>
+                                            <div id="qr-display-area" style="margin-top: 1rem; display: none; text-align: center; background: white; padding: 1rem; border-radius: var(--radius-sm); border: 1px dashed var(--primary);">
+                                                <img id="qr-code-img" src="" alt="QR Code" style="width: 150px; height: 150px; margin: 0 auto; display: block;">
+                                                <p style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-main); font-weight: 600;">Scan to Pay: <span id="qr-upi-text" style="color: var(--primary-dark);"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #f8fafc;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <h4 style="margin: 0; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">💵 Offline Mode (Cash on Delivery)</h4>
+                                            <input type="radio" name="pay-mode" style="transform: scale(1.5);">
+                                        </div>
+                                        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: var(--text-muted);">Buyers will pay you directly in cash when they arrive to pick up crops or equipment.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Crop Sales -->
+                    <div id="pay-crops" class="pay-tab-content hidden fade-in" style="display: none;">
+                        <div style="display: grid; gap: 2rem;">
+                            <!-- Pending -->
+                            <div style="background: white; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid #fcd34d; border-left: 4px solid #f59e0b;">
+                                <h3 style="margin: 0 0 1rem 0; color: #b45309; display: flex; justify-content: space-between;">
+                                    <span>⏳ Pending Wholesaler Dues</span>
+                                    <span>₹52,000</span>
+                                </h3>
+                                
+                                <div class="tx-item" style="background: #fffbeb; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 0.5rem;">
+                                    <div class="tx-details">
+                                        <h4 style="margin: 0;">National Traders (Wholesaler)</h4>
+                                        <p style="margin: 0.25rem 0; font-size: 0.9rem;">For: Premium Cotton (10 Qtl)</p>
+                                        <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Due since: Oct 19 • Mode: Online UPI</p>
+                                    </div>
+                                    <div class="tx-actions" style="text-align: right;">
+                                        <h3 style="color: #b45309; margin: 0 0 0.5rem 0;">₹52,000</h3>
+                                        <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Remind</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Paid -->
+                            <div style="background: white; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); border-left: 4px solid var(--success);">
+                                <h3 style="margin: 0 0 1rem 0; color: var(--primary-dark);">✅ Completed Wholesaler Payments</h3>
+                                
+                                <div class="tx-item" style="border-bottom: 1px solid var(--background); padding-bottom: 1rem; margin-bottom: 1rem;">
+                                    <div class="tx-details">
+                                        <h4 style="margin: 0;">MegaMart Supples (Wholesaler)</h4>
+                                        <p style="margin: 0.25rem 0; font-size: 0.9rem;">For: Wheat (50 Qtl)</p>
+                                        <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Paid on: Oct 10 • Mode: Online UPI</p>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <h3 style="color: var(--success); margin: 0;">+₹1,05,000</h3>
+                                    </div>
+                                </div>
+
+                                <div class="tx-item">
+                                    <div class="tx-details">
+                                        <h4 style="margin: 0;">Local Grain Mandi (Wholesaler)</h4>
+                                        <p style="margin: 0.25rem 0; font-size: 0.9rem;">For: Soybean (20 Qtl)</p>
+                                        <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Paid on: Sep 28 • Mode: Offline COD</p>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <h3 style="color: var(--success); margin: 0;">+₹92,000</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Equipment Rentals -->
+                    <div id="pay-equipment" class="pay-tab-content hidden fade-in" style="display: none;">
+                        <div style="display: grid; gap: 2rem;">
+                            <!-- Pending -->
+                            <div style="background: white; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid #fcd34d; border-left: 4px solid #f59e0b;">
+                                <h3 style="margin: 0 0 1rem 0; color: #b45309; display: flex; justify-content: space-between;">
+                                    <span>⏳ Pending Rental Dues</span>
+                                    <span>₹9,600</span>
+                                </h3>
+                                
+                                <div class="tx-item" style="background: #fffbeb; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 0.5rem;">
+                                    <div class="tx-details">
+                                        <h4 style="margin: 0;">Sanjay Patil (Farmer)</h4>
+                                        <p style="margin: 0.25rem 0; font-size: 0.9rem;">For: Mahindra Tractor 575 DI (Oct 15 - Oct 16)</p>
+                                        <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Current Status: Equipment Returned • Mode: Offline COD</p>
+                                    </div>
+                                    <div class="tx-actions" style="text-align: right;">
+                                        <h3 style="color: #b45309; margin: 0 0 0.5rem 0;">₹9,600</h3>
+                                        <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="alert('Payment marked as collected in cash!'); this.parentElement.parentElement.remove();">Mark Received</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Paid -->
+                            <div style="background: white; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); border-left: 4px solid var(--primary);">
+                                <h3 style="margin: 0 0 1rem 0; color: var(--primary-dark);">✅ Completed Rental Income</h3>
+                                
+                                <div class="tx-item" style="border-bottom: 1px solid var(--background); padding-bottom: 1rem; margin-bottom: 1rem;">
+                                    <div class="tx-details">
+                                        <h4 style="margin: 0;">Amit D. (Farmer)</h4>
+                                        <p style="margin: 0.25rem 0; font-size: 0.9rem;">For: Multi-speed Rotavator (Oct 5)</p>
+                                        <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Paid on: Oct 5 • Mode: Online QR</p>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <h3 style="color: var(--primary); margin: 0;">+₹1,600</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="booking-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-equipment-name">Book Equipment</h3>
+                <button class="close-btn" onclick="closeBookingModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Start Date</label>
+                    <input type="date" id="booking-start" required>
+                </div>
+                <div class="input-group">
+                    <label>End Date</label>
+                    <input type="date" id="booking-end" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Payment Method</label>
+                    <select id="booking-payment" required>
+                        <option value="upi">Online (UPI/QR)</option>
+                        <option value="cod">Offline (Cash on Delivery)</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary w-100" onclick="submitBooking()">Confirm Booking</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

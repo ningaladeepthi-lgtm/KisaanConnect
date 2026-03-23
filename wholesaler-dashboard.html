@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wholesaler Portal - KisanConnect</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="logo-icon">🌿</span>
+                <h2>KisanConnect</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-target="crop-listings-view">
+                    <span class="nav-icon">📦</span>
+                    <span data-i18n="menu_croplistings">Crop Listings</span>
+                </button>
+                <button class="nav-item" data-target="bidding-view">
+                    <span class="nav-icon">⚖️</span>
+                    <span data-i18n="menu_bidding">Browse & Bid</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="user-avatar-initial" style="background:#F59E0B">A</div>
+                    <div class="user-info">
+                        <h4 id="user-display-name">AgriCorp India</h4>
+                        <p>Wholesaler • <span id="user-display-location">Mumbai</span></p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="window.location.href='index.html'" data-i18n="btn_logout">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="page-title" data-i18n="title_croplistings">Crop Listings</h1>
+                    <p id="page-subtitle" data-i18n="subtitle_croplistings">Browse available crops, apply filters, and find the best deals.</p>
+                </div>
+                <div class="header-actions" style="display: flex; gap: 1.5rem; align-items: center;">
+                    <select class="lang-selector" onchange="changeLanguage(this.value)" style="padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); background: var(--surface);">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                        <option value="te">తెలుగు</option>
+                    </select>
+                    <a href="index.html" data-i18n="nav_login" style="color: var(--text-muted); font-weight: 500; text-decoration: none;">Login</a>
+                    <span style="color: var(--border);">|</span>
+                    <button class="btn btn-outline" onclick="alert('Notification sent!')">🔔 Price Alerts</button>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                
+                <!-- View: Crop Listings -->
+                <div id="crop-listings-view" class="view-section active">
+                    
+                    <div class="search-filter-bar mb-4" style="background: white; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                        <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--primary-dark);">Search & Filter Settings</h3>
+                        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-end;">
+                            
+                            <!-- Search by Name -->
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.5rem;">Search by Name 🔍</label>
+                                <input type="text" id="ws-search" data-i18n="search_ph" placeholder="Search crop or seller..." class="search-input" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                            </div>
+
+                            <!-- 2. Filter by Location -->
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="display: block; font-size: 0.85rem; color: var(--primary); font-weight: 700; margin-bottom: 0.5rem;">📍 Filter by Location</label>
+                                <select id="ws-location" class="filter-select" style="width: 100%; padding: 0.75rem; border: 2px solid var(--primary); background: #f0fdfa; border-radius: var(--radius-sm); font-family: inherit;">
+                                    <option value="">All Locations</option>
+                                    <optgroup label="Andhra Pradesh">
+                                        <option value="Vijayawada">Vijayawada</option>
+                                        <option value="Guntur">Guntur</option>
+                                        <option value="Nellore">Nellore</option>
+                                        <option value="Kurnool">Kurnool</option>
+                                        <option value="Rajahmundry">Rajahmundry</option>
+                                    </optgroup>
+                                    <optgroup label="Telangana">
+                                        <option value="Warangal">Warangal</option>
+                                        <option value="Karimnagar">Karimnagar</option>
+                                        <option value="Khammam">Khammam</option>
+                                        <option value="Nizamabad">Nizamabad</option>
+                                        <option value="Mahbubnagar">Mahbubnagar</option>
+                                        <option value="Hyderabad">Hyderabad</option>
+                                    </optgroup>
+                                    <optgroup label="Maharashtra">
+                                        <option value="Pune">Pune</option>
+                                        <option value="Nashik">Nashik</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+
+                            <!-- 3. Filter by Crop Type -->
+                            <div style="flex: 1; min-width: 150px;">
+                                <label style="display: block; font-size: 0.85rem; color: var(--primary); font-weight: 700; margin-bottom: 0.5rem;">🌾 Filter by Crop Type</label>
+                                <select id="ws-type" class="filter-select" style="width: 100%; padding: 0.75rem; border: 2px solid var(--primary); background: #f0fdfa; border-radius: var(--radius-sm); font-family: inherit;">
+                                    <option value="" data-i18n="filter_all">All Crops</option>
+                                    <option value="Wheat">Wheat</option>
+                                    <option value="Soybean">Soybean</option>
+                                    <option value="Cotton">Cotton</option>
+                                    <option value="Rice">Rice</option>
+                                    <option value="Onion">Onion</option>
+                                </select>
+                            </div>
+                            
+                            <button id="ws-filter-btn" class="btn btn-primary" style="height: 42px; padding: 0 2rem;">Apply</button>
+                        </div>
+                    </div>
+
+                    <h2 style="margin-top: 2rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border); color: var(--text-main);">📋 Browse Crop Listing</h2>
+                    <div class="listings-grid" id="wholesaler-crops-grid">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- View: Bidding & Trends -->
+                <div id="bidding-view" class="view-section">
+                    
+                    <!-- 3 Bidding Categories -->
+                    <div class="bid-tabs mb-4 fade-in" style="display: flex; gap: 1.5rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; overflow-x: auto;">
+                        <button class="bid-btn active" onclick="switchBiddingTab('bid-place', this)" style="background: none; border: none; font-weight: 600; color: var(--primary); padding: 0.5rem 0; cursor: pointer; border-bottom: 2px solid var(--primary); margin-bottom: -2px; white-space: nowrap;">1. Place Bid on Listing</button>
+                        <button class="bid-btn" onclick="switchBiddingTab('bid-contact', this)" style="background: none; border: none; font-weight: 500; color: var(--text-muted); padding: 0.5rem 0; cursor: pointer; white-space: nowrap;">2. Contact Farmer Directly</button>
+                        <button class="bid-btn" onclick="switchBiddingTab('bid-trends', this)" style="background: none; border: none; font-weight: 500; color: var(--text-muted); padding: 0.5rem 0; cursor: pointer; white-space: nowrap;">3. View Price Trends</button>
+                    </div>
+
+                    <!-- 1. Place Bid on Listing -->
+                    <div id="bid-place" class="bid-tab-content fade-in">
+                        <h3 class="section-heading">🔥 Crops Ready for Bids</h3>
+                        <p class="text-muted" style="margin-bottom: 1.5rem;">Select from the top available farmer listings below to place a direct bid.</p>
+                        
+                        <div class="transaction-history" style="background: white;" id="bid-place-list">
+                            <!-- Populated dynamically / mocked -->
+                            <div class="tx-item">
+                                <div class="tx-details" style="flex: 2;">
+                                    <h4>Premium Wheat (50 Qtl)</h4>
+                                    <p>Seller: Ramesh Kumar • Pune</p>
+                                </div>
+                                <div class="tx-amount" style="flex: 1; color: var(--text-main);">Asking: ₹2,150/Qtl</div>
+                                <button class="btn btn-primary" style="padding: 0.5rem 1.5rem;" onclick="openBidModal('Premium Wheat', '₹2,150/Qtl')">Place Bid</button>
+                            </div>
+                            
+                            <div class="tx-item">
+                                <div class="tx-details" style="flex: 2;">
+                                    <h4>Standard Onion (120 Qtl)</h4>
+                                    <p>Seller: Santosh Patil • Nashik</p>
+                                </div>
+                                <div class="tx-amount" style="flex: 1; color: var(--text-main);">Asking: ₹1,800/Qtl</div>
+                                <button class="btn btn-primary" style="padding: 0.5rem 1.5rem;" onclick="openBidModal('Standard Onion', '₹1,800/Qtl')">Place Bid</button>
+                            </div>
+                        </div>
+
+                        <h3 class="section-heading mt-4" style="margin-top: 2rem;">My Active Bids</h3>
+                        <div class="transaction-history" style="background: white;">
+                            <div class="tx-item">
+                                <div class="tx-icon pending">⏳</div>
+                                <div class="tx-details">
+                                    <h4>Premium Wheat (50 Qtl)</h4>
+                                    <p>Bid placed at ₹2,100/Qtl • Waiting for farmer approval</p>
+                                    <span class="badge badge-warning">Under Review</span>
+                                </div>
+                                <div class="tx-amount" style="color: var(--text-main);">Current: ₹1,05,000</div>
+                                <button class="btn btn-outline" style="margin-left: 1rem; padding: 0.5rem 1rem;" onclick="openBidModal('Premium Wheat (50 Qtl)', '₹2,150/Qtl')">Revise</button>
+                            </div>
+                            
+                            <div class="tx-item">
+                                <div class="tx-icon success">⬇</div>
+                                <div class="tx-details">
+                                    <h4>Desi Cotton (30 Qtl)</h4>
+                                    <p>Bid placed at ₹7,150/Qtl • Accepted by Farmer</p>
+                                    <span class="badge badge-success">Accepted</span>
+                                </div>
+                                <div class="tx-amount positive">₹2,14,500</div>
+                                <button class="btn btn-primary" style="margin-left: 1rem; padding: 0.5rem 1rem;" onclick="alert('Redirecting to secure payment gateway...')">Proceed to Pay</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Contact Farmer Directly -->
+                    <div id="bid-contact" class="bid-tab-content hidden fade-in" style="display: none;">
+                        <h3 class="section-heading">Farmer Directory</h3>
+                        <p class="text-muted" style="margin-bottom: 1.5rem;">Reach out to verified sellers to negotiate bulk rates or secure future harvests.</p>
+                        
+                        <div class="listings-grid" id="farmer-directory-grid">
+                            <!-- Populated dynamically below / mocked initially -->
+                            <div class="meter-card" style="text-align: left;">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div class="avatar" style="width: 48px; height: 48px;">R</div>
+                                    <div>
+                                        <h4 style="margin: 0;">Ramesh Kumar</h4>
+                                        <span class="badge badge-success" style="font-size: 0.7rem;">Verified Farmer</span>
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">📍 Pune, Maharashtra</p>
+                                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">🌾 Specializes in: Wheat</p>
+                                <button class="btn btn-outline w-100" onclick="alert('Starting a call with Ramesh Kumar (9876543210)')">📞 Contact Directly</button>
+                            </div>
+                            
+                            <div class="meter-card" style="text-align: left;">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div class="avatar" style="width: 48px; height: 48px; background: #3b82f6;">S</div>
+                                    <div>
+                                        <h4 style="margin: 0;">Santosh Patil</h4>
+                                        <span class="badge badge-success" style="font-size: 0.7rem;">Verified Farmer</span>
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">📍 Nashik, Maharashtra</p>
+                                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">🌾 Specializes in: Onion</p>
+                                <button class="btn btn-outline w-100" onclick="alert('Starting a call with Santosh Patil (9988776655)')">📞 Contact Directly</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. View Price Trends -->
+                    <div id="bid-trends" class="bid-tab-content hidden fade-in" style="display: none;">
+                        <!-- AI Price Trends Widget -->
+                        <div class="ai-widget fade-in">
+                            <div class="ai-header">
+                                <div class="ai-title">
+                                    <span>📈</span>
+                                    <h3>Market Price Trends</h3>
+                                </div>
+                                <span class="badge badge-ai">Based on Last 30 Days</span>
+                            </div>
+                            <div class="price-meters" style="grid-template-columns: repeat(3, 1fr);">
+                                <div class="meter-card">
+                                    <span>Avg. Wheat Price</span>
+                                    <h4>₹2,100 / Qtl</h4>
+                                    <div class="trend positive">↑ Steady Demand</div>
+                                </div>
+                                <div class="meter-card">
+                                    <span>Avg. Soybean Price</span>
+                                    <h4>₹4,600 / Qtl</h4>
+                                    <div class="trend negative">↓ Market Correction</div>
+                                </div>
+                                <div class="meter-card">
+                                    <span>Avg. Cotton Price</span>
+                                    <h4>₹7,200 / Qtl</h4>
+                                    <div class="trend positive">↑ High Export Margin</div>
+                                </div>
+                            </div>
+                            <p style="margin-top: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+                                💡 AI Tip: Consider bidding slightly lower on Soybean as the market trend shows a temporary dip in coming days.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Bid Modal -->
+    <div id="bid-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-crop-name">Place Bid</h3>
+                <button class="close-btn" onclick="closeBidModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: var(--background); padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Asking Price</p>
+                    <h4 id="modal-asking-price" style="font-size: 1.25rem; color: var(--text-main); margin-top: 0.25rem;"></h4>
+                </div>
+                
+                <div class="input-group">
+                    <label>Your Bid Amount (₹ per Quintal)</label>
+                    <input type="number" id="bid-amount" placeholder="e.g. 2100" required>
+                </div>
+                
+                <button class="btn btn-primary w-100" onclick="submitBid()">Submit Bid</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        // Additional Wholesaler specific modal logic, since we share dashboard.js nav logic
+        function openBidModal(cropName, askingPrice) {
+            const modal = document.getElementById('bid-modal');
+            document.getElementById('modal-crop-name').textContent = `Bid for: ${cropName}`;
+            document.getElementById('modal-asking-price').textContent = askingPrice;
+            
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+        }
+
+        function closeBidModal() {
+            const modal = document.getElementById('bid-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function submitBid() {
+            const amountStr = document.getElementById('bid-amount').value;
+            const amount = parseFloat(amountStr);
+            if (!amountStr || isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid bid amount greater than 0.");
+                return;
+            }
+            
+            alert(`Your bid of ₹${amount}/Qtl has been submitted successfully to the farmer!`);
+            closeBidModal();
+            document.getElementById('bid-amount').value = '';
+        }
+    </script>
+</body>
+</html>

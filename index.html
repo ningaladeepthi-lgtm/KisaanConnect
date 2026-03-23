@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KisanConnect - Login</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="split-layout">
+        <div class="left-panel">
+            <div class="panel-content">
+                <div class="logo">
+                     <span class="logo-icon">🌿</span>
+                     <span>KisanConnect</span>
+                </div>
+                <h1>Empowering the <br><span class="highlight">Agricultural</span> Future</h1>
+                <p>Connect. Trade. Grow. The premier platform bridging the gap between farmers and wholesalers.</p>
+                
+                <div class="features">
+                    <div class="feature-item">
+                        <div class="icon-box">🌾</div>
+                        <div class="feature-text">
+                            <h4>Direct Trading</h4>
+                            <p>Sell crops directly without middlemen.</p>
+                        </div>
+                    </div>
+                     <div class="feature-item">
+                        <div class="icon-box">🚜</div>
+                        <div class="feature-text">
+                            <h4>Equipment Rental</h4>
+                            <p>Maximize utility of your farming assets.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="floating-element shape-1"></div>
+            <div class="floating-element shape-2"></div>
+            <div class="floating-element shape-3"></div>
+        </div>
+        
+        <div class="right-panel">
+            <div style="position: absolute; top: 2rem; right: 2rem; display: flex; gap: 1.5rem; z-index: 10; align-items: center;">
+                <select class="lang-selector" onchange="changeLanguage(this.value)" style="padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); background: var(--surface);">
+                    <option value="en">English</option>
+                    <option value="hi">हिंदी</option>
+                    <option value="te">తెలుగు</option>
+                </select>
+                <a href="index.html" data-i18n="nav_login" style="color: var(--primary); font-weight: 600; text-decoration: none;">Login</a>
+            </div>
+            
+            <div class="form-container">
+            
+                <div class="auth-toggle-group">
+                    <button class="auth-toggle active" id="btn-login" onclick="toggleAuthMode('login')" data-i18n="btn_login">Login</button>
+                    <button class="auth-toggle" id="btn-signup" onclick="toggleAuthMode('signup')" data-i18n="btn_signup">Create Account</button>
+                    <div class="auth-toggle-slider" id="auth-slider"></div>
+                </div>
+
+                <div class="form-header">
+                    <h2 id="form-title" data-i18n="title_login">Welcome Back</h2>
+                    <p id="form-subtitle" data-i18n="subtitle_login">Enter your details to access your account.</p>
+                </div>
+
+                <div class="category-toggle">
+                    <label class="category-option">
+                        <input type="radio" name="category" value="farmer" checked>
+                        <div class="category-card">
+                            <span class="icon">🧑‍🌾</span>
+                            <span data-i18n="role_farmer">Farmer</span>
+                        </div>
+                    </label>
+                    <label class="category-option">
+                        <input type="radio" name="category" value="wholesaler">
+                        <div class="category-card">
+                            <span class="icon">🏭</span>
+                            <span data-i18n="role_wholesaler">Wholesaler</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form active-form" novalidate>
+                    <div class="input-group">
+                        <label>Your Name (For Prototype)</label>
+                        <input type="text" id="login-name" placeholder="e.g. Ammu" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Location (For Prototype)</label>
+                        <input type="text" id="login-location" placeholder="e.g. Pune" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="login-phone" data-i18n="label_phone">Phone Number</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">+91</span>
+                            <input type="tel" id="login-phone" placeholder="9876543210" required>
+                        </div>
+                        <span class="error-msg" id="error-login-phone"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="login-pin" data-i18n="label_pin">PIN</label>
+                        <input type="password" id="login-pin" placeholder="••••" maxlength="4" required>
+                        <span class="error-msg" id="error-login-pin"></span>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="login-submit-btn" data-i18n="submit_login">Login to Account</button>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signup-form" class="auth-form" novalidate>
+                    <div class="input-group">
+                        <label for="signup-name" data-i18n="label_name">Full Name</label>
+                        <input type="text" id="signup-name" placeholder="Ramesh Kumar" required>
+                        <span class="error-msg" id="error-signup-name"></span>
+                    </div>
+
+                    <div class="input-group">
+                         <label for="signup-phone" data-i18n="label_phone">Phone Number</label>
+                         <div class="input-wrapper">
+                             <span class="input-prefix">+91</span>
+                             <input type="tel" id="signup-phone" placeholder="9876543210" required>
+                         </div>
+                         <span class="error-msg" id="error-signup-phone"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="signup-location" data-i18n="label_location">City Name</label>
+                        <input type="text" id="signup-location" placeholder="Pune" required>
+                        <span class="error-msg" id="error-signup-location"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group half">
+                            <label for="signup-pin" data-i18n="label_create_pin">Create PIN</label>
+                            <input type="password" id="signup-pin" placeholder="••••" maxlength="4" required>
+                            <span class="error-msg" id="error-signup-pin"></span>
+                        </div>
+
+                        <div class="input-group half">
+                            <label for="signup-confirm-pin" data-i18n="label_confirm_pin">Confirm PIN</label>
+                            <input type="password" id="signup-confirm-pin" placeholder="••••" maxlength="4" required>
+                            <span class="error-msg" id="error-signup-confirm-pin"></span>
+                        </div>
+                    </div>
+
+                    <div class="terms-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="terms-checkbox" required>
+                            <span class="checkmark"></span>
+                            <span class="terms-text">I agree to the <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="signup-submit-btn" data-i18n="submit_signup">Create Account</button>
+                </form>
+
+                <!-- Notification Area -->
+                <div id="notification-area" class="notification hidden">
+                    <span id="notification-message"></span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

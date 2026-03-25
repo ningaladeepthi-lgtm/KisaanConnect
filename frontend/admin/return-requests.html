@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Requests - Admin Panel | KisaanConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fa-solid fa-leaf"></i> KisaanConnect</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="users.html" class="nav-item"><i class="fa-solid fa-users"></i> Users</a>
+                <a href="crops.html" class="nav-item"><i class="fa-solid fa-seedling"></i> Crops</a>
+                <a href="orders.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
+                <a href="return-requests.html" class="nav-item active"><i class="fa-solid fa-arrow-rotate-left"></i> Returns</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="search-bar">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search return requests by Request ID or Order ID...">
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">A</div>
+                    <span style="font-weight: 500;">System Admin</span>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h1 class="page-title">Manage Return Requests</h1>
+                    <button class="btn btn-outline"><i class="fa-solid fa-filter"></i> Advanced Filter</button>
+                </div>
+
+                <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="stat-card">
+                        <div class="stat-icon warning"><i class="fa-solid fa-rotate-left"></i></div>
+                        <div class="stat-details">
+                            <h3>Pending Returns</h3>
+                            <div class="value">24</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon primary"><i class="fa-solid fa-check-double"></i></div>
+                        <div class="stat-details">
+                            <h3>Approved Returns</h3>
+                            <div class="value">156</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon danger"><i class="fa-solid fa-xmark"></i></div>
+                        <div class="stat-details">
+                            <h3>Rejected Returns</h3>
+                            <div class="value">42</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Return Claims Tracker</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Request ID / Order ID</th>
+                                <th>Customer Information</th>
+                                <th>Item details</th>
+                                <th>Reason for Return</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div style="font-weight: 600;">#RET-1092</div><small class="text-muted">Order: #ORD-8910</small></td>
+                                <td>Kalyan Store<br><small class="text-muted">+91 9123456780</small></td>
+                                <td>Apples (20kg)</td>
+                                <td>Quality Degradation (Damaged in transit)</td>
+                                <td><span class="badge badge-warning">Pending Review</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-approve" title="Approve Claim" style="color: var(--success); border-color: var(--success);"><i class="fa-solid fa-check"></i></button>
+                                    <button class="btn btn-outline text-danger" title="Reject Claim" style="color: var(--danger);"><i class="fa-solid fa-xmark"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div style="font-weight: 600;">#RET-1090</div><small class="text-muted">Order: #ORD-8850</small></td>
+                                <td>Sharma Retailers<br><small class="text-muted">+91 9988776655</small></td>
+                                <td>Onions (100kg)</td>
+                                <td>Wrong Item Received</td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                                <td>
+                                    <button class="btn btn-outline" title="View Details"><i class="fa-regular fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div style="font-weight: 600;">#RET-1088</div><small class="text-muted">Order: #ORD-8821</small></td>
+                                <td>Venkat Traders<br><small class="text-muted">+91 7766554433</small></td>
+                                <td>Organic Cotton (50kg)</td>
+                                <td>Quantity Mismatch</td>
+                                <td><span class="badge badge-danger">Rejected</span></td>
+                                <td>
+                                    <button class="btn btn-outline" title="View Details"><i class="fa-regular fa-eye"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/admin.js"></script>
+</body>
+</html>

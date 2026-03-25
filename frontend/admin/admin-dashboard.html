@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | KisaanConnect</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; }
+        .navbar-brand { font-weight: 700; letter-spacing: 0.5px; }
+
+        /* Sidebar */
+        .admin-sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #343a40;
+        }
+        .sidebar-menu .nav-link {
+            color: #c2c7d0;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.25rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .sidebar-menu .nav-link:hover {
+            color: #fff;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .sidebar-menu .nav-link.active {
+            color: #fff;
+            background-color: #198754; /* Success green */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Summary Cards */
+        .summary-card {
+            border: none;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            color: white;
+        }
+        
+        /* Tables */
+        .table-custom th {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        /* Prominent Returns Warning */
+        .returns-alert {
+            animation: pulse-border 2s infinite;
+            border-left: 5px solid #dc3545 !important;
+        }
+        @keyframes pulse-border {
+            0% { border-left-color: #dc3545; }
+            50% { border-left-color: #ffc107; }
+            100% { border-left-color: #dc3545; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="#"><i class="fas fa-leaf me-2"></i>KisaanConnect Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link text-white position-relative" href="#" onclick="switchTab('tab-returns')">
+                            <i class="fas fa-bell"></i>
+                            <span class="position-absolute top-25 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                <span class="visually-hidden">New alerts</span>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle text-white fw-medium d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <div class="bg-white text-success rounded-circle d-flex justify-content-center align-items-center me-2 fw-bold" style="width: 32px; height: 32px;">S</div>
+                            System Admin
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="../index.html">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="container-fluid">
+        <div class="row">
+            
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-2 col-md-3 p-0 admin-sidebar d-none d-md-block shadow-sm">
+                <div class="p-3">
+                    <p class="text-uppercase text-muted fw-bold small mb-3 ps-3">Control Panel</p>
+                    <div class="nav flex-column sidebar-menu" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <button class="nav-link text-start active" id="tab-dashboard" data-bs-toggle="pill" data-bs-target="#view-dashboard" type="button" role="tab">
+                            <i class="fas fa-chart-pie me-2 w-20px text-center"></i> Dashboard
+                        </button>
+                        <button class="nav-link text-start" id="tab-users" data-bs-toggle="pill" data-bs-target="#view-users" type="button" role="tab">
+                            <i class="fas fa-users me-2 w-20px text-center"></i> Users
+                        </button>
+                        <button class="nav-link text-start" id="tab-crops" data-bs-toggle="pill" data-bs-target="#view-crops" type="button" role="tab">
+                            <i class="fas fa-seedling me-2 w-20px text-center"></i> Crops
+                        </button>
+                        <button class="nav-link text-start" id="tab-orders" data-bs-toggle="pill" data-bs-target="#view-orders" type="button" role="tab">
+                            <i class="fas fa-shopping-cart me-2 w-20px text-center"></i> Orders
+                        </button>
+                        <button class="nav-link text-start text-danger mt-3 returns-alert" id="tab-returns" data-bs-toggle="pill" data-bs-target="#view-returns" type="button" role="tab">
+                            <i class="fas fa-exclamation-triangle me-2 w-20px text-center"></i> Return Requests <span class="badge bg-danger ms-2 rounded-pill">24</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-lg-10 col-md-9 p-4">
+                <div class="tab-content" id="v-pills-tabContent">
+                    
+                    <!-- ================= DASHBOARD OVERVIEW ================= -->
+                    <div class="tab-pane fade show active" id="view-dashboard" role="tabpanel">
+                        <h2 class="fw-bold mb-4 text-dark h3">Overview Statistics</h2>
+                        
+                        <div class="row g-4 mb-5">
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="card summary-card shadow-sm h-100">
+                                    <div class="card-body p-4 d-flex align-items-center">
+                                        <div class="icon-box bg-primary shadow-sm me-3"><i class="fas fa-users"></i></div>
+                                        <div>
+                                            <p class="text-muted fw-bold mb-0 text-uppercase small">Total Users</p>
+                                            <h3 class="fw-bold mb-0 text-dark">12,450</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="card summary-card shadow-sm h-100">
+                                    <div class="card-body p-4 d-flex align-items-center">
+                                        <div class="icon-box bg-success shadow-sm me-3"><i class="fas fa-seedling"></i></div>
+                                        <div>
+                                            <p class="text-muted fw-bold mb-0 text-uppercase small">Active Crops</p>
+                                            <h3 class="fw-bold mb-0 text-dark">3,892</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="card summary-card shadow-sm h-100">
+                                    <div class="card-body p-4 d-flex align-items-center">
+                                        <div class="icon-box bg-info shadow-sm me-3"><i class="fas fa-shopping-cart text-white"></i></div>
+                                        <div>
+                                            <p class="text-muted fw-bold mb-0 text-uppercase small">Total Orders</p>
+                                            <h3 class="fw-bold mb-0 text-dark">12,456</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="card summary-card shadow-sm h-100 returns-alert">
+                                    <div class="card-body p-4 d-flex align-items-center">
+                                        <div class="icon-box bg-danger shadow-sm me-3"><i class="fas fa-undo-alt"></i></div>
+                                        <div>
+                                            <p class="text-danger fw-bold mb-0 text-uppercase small">Pending Returns</p>
+                                            <h3 class="fw-bold mb-0 text-dark">24</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white p-4 border-bottom">
+                                <h5 class="fw-bold m-0"><i class="fas fa-bolt text-warning me-2"></i> Quick Actions</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="d-flex gap-3 flex-wrap">
+                                    <button class="btn btn-outline-primary" onclick="switchTab('tab-users')">Review Suspended Users</button>
+                                    <button class="btn btn-outline-danger" onclick="switchTab('tab-crops')">Check Reported Listings</button>
+                                    <button class="btn btn-danger shadow" onclick="switchTab('tab-returns')">Process Returns Priority</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= USERS PAGE ================= -->
+                    <div class="tab-pane fade" id="view-users" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                            <h2 class="fw-bold text-dark h3 m-0">User Management</h2>
+                            <div class="input-group" style="max-width: 300px;">
+                                <input type="text" class="form-control" placeholder="Search users...">
+                                <button class="btn btn-success"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-custom align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ps-4">Name</th>
+                                                <th>Email/Phone</th>
+                                                <th>Role</th>
+                                                <th>Status</th>
+                                                <th class="text-end pe-4">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="user-1">
+                                                <td class="ps-4 fw-bold">Ramesh Kumar</td>
+                                                <td>ramesh@example.com <br><small class="text-muted">+91 9876543210</small></td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success px-3 border border-success">Farmer</span></td>
+                                                <td><span class="badge bg-primary">Active</span></td>
+                                                <td class="text-end pe-4">
+                                                    <button class="btn btn-sm btn-outline-secondary me-1" title="View"><i class="fas fa-eye"></i></button>
+                                                    <button class="btn btn-sm btn-outline-danger" title="Disable" onclick="disableItem('user-1', 'User')"><i class="fas fa-ban"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr id="user-2">
+                                                <td class="ps-4 fw-bold">AgriCorp India</td>
+                                                <td>contact@agricorp.com <br><small class="text-muted">+91 8765432109</small></td>
+                                                <td><span class="badge bg-info bg-opacity-10 text-info px-3 border border-info">Wholesaler</span></td>
+                                                <td><span class="badge bg-primary">Active</span></td>
+                                                <td class="text-end pe-4">
+                                                    <button class="btn btn-sm btn-outline-secondary me-1" title="View"><i class="fas fa-eye"></i></button>
+                                                    <button class="btn btn-sm btn-outline-danger" title="Disable" onclick="disableItem('user-2', 'User')"><i class="fas fa-ban"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr id="user-3">
+                                                <td class="ps-4 fw-bold text-muted">Suresh Meena</td>
+                                                <td class="text-muted">suresh.m@example.com <br><small>+91 7654321098</small></td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success px-3 border border-success">Farmer</span></td>
+                                                <td><span class="badge bg-danger">Disabled</span></td>
+                                                <td class="text-end pe-4">
+                                                    <button class="btn btn-sm btn-outline-secondary me-1" title="View"><i class="fas fa-eye"></i></button>
+                                                    <button class="btn btn-sm btn-success" title="Enable" onclick="alert('User reactivated successfully.')"><i class="fas fa-check"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= CROPS PAGE ================= -->
+                    <div class="tab-pane fade" id="view-crops" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                            <h2 class="fw-bold text-dark h3 m-0">Crop Listings Moderation</h2>
+                            <select class="form-select w-auto">
+                                <option>All Categories</option>
+                                <option>Grains</option>
+                                <option>Vegetables</option>
+                            </select>
+                        </div>
+
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-custom align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ps-4">Crop Details</th>
+                                                <th>Farmer</th>
+                                                <th>Price</th>
+                                                <th>Status</th>
+                                                <th class="text-end pe-4">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="crop-1">
+                                                <td class="ps-4">
+                                                    <div class="d-flex align-items-center gap-3">
+                                                        <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=100" class="rounded" width="50" height="50" style="object-fit: cover;">
+                                                        <div>
+                                                            <p class="mb-0 fw-bold text-dark">Premium Wheat</p>
+                                                            <small class="text-muted">Grains & Cereals | 500 kg</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>Ramesh Kumar</td>
+                                                <td class="fw-bold text-success">₹2,100 / Qtl</td>
+                                                <td><span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Verified</span></td>
+                                                <td class="text-end pe-4">
+                                                    <button class="btn btn-sm btn-outline-danger" title="Remove Fake Listing" onclick="disableItem('crop-1', 'Listing')"><i class="fas fa-trash-alt me-1"></i> Remove Listing</button>
+                                                </td>
+                                            </tr>
+                                            <tr id="crop-2" class="table-warning">
+                                                <td class="ps-4">
+                                                    <div class="d-flex align-items-center gap-3">
+                                                        <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted" style="width: 50px; height: 50px;">
+                                                            <i class="fas fa-image"></i>
+                                                        </div>
+                                                        <div>
+                                                            <p class="mb-0 fw-bold text-dark">Suspicious Onion Load</p>
+                                                            <small class="text-danger fw-bold"><i class="fas fa-flag"></i> Reported 5 times</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>Unknown Seller</td>
+                                                <td class="fw-bold text-success">₹50 / Qtl</td>
+                                                <td><span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle me-1"></i> Under Review</span></td>
+                                                <td class="text-end pe-4">
+                                                    <button class="btn btn-sm btn-danger shadow-sm" title="Remove Fake Listing" onclick="disableItem('crop-2', 'Listing')"><i class="fas fa-trash-alt me-1"></i> Remove Fake Listing</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= ORDERS PAGE ================= -->
+                    <div class="tab-pane fade" id="view-orders" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                            <h2 class="fw-bold text-dark h3 m-0">Orders Tracking</h2>
+                        </div>
+                        
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-custom align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ps-4">OrderID</th>
+                                                <th>Items</th>
+                                                <th>Buyer & Seller</th>
+                                                <th>Transaction</th>
+                                                <th>Fulfillment Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="ps-4 fw-bold">#ORD-8942</td>
+                                                <td>Organic Wheat (50kg)</td>
+                                                <td><small><b>Buyer:</b> AgriCorp<br><b>Seller:</b> Ramesh K.</small></td>
+                                                <td class="fw-bold">₹2,450</td>
+                                                <td><span class="badge bg-success rounded-pill px-3 py-2"><i class="fas fa-truck-loading me-1"></i> Delivered</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="ps-4 fw-bold">#ORD-8941</td>
+                                                <td>Basmati Rice (100kg)</td>
+                                                <td><small><b>Buyer:</b> Suresh P.<br><b>Seller:</b> Vinod Farms</small></td>
+                                                <td class="fw-bold">₹8,200</td>
+                                                <td><span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="fas fa-spinner fa-spin me-1"></i> Pending</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="ps-4 fw-bold">#ORD-8850</td>
+                                                <td>Red Onions (100kg)</td>
+                                                <td><small><b>Buyer:</b> Sharma Retail<br><b>Seller:</b> Santosh P.</small></td>
+                                                <td class="fw-bold text-decoration-line-through text-muted">₹54,000</td>
+                                                <td><span class="badge bg-danger rounded-pill px-3 py-2"><i class="fas fa-undo me-1"></i> Returned</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= RETURN REQUESTS PAGE ================= -->
+                    <div class="tab-pane fade" id="view-returns" role="tabpanel">
+                        <div class="p-4 bg-danger bg-opacity-10 rounded-3 border border-danger border-opacity-25 mb-4 d-flex justify-content-center align-items-center flex-wrap gap-3">
+                            <div>
+                                <h2 class="fw-bold text-danger h3 m-0"><i class="fas fa-exclamation-triangle me-2"></i> Active Return Requests</h2>
+                                <p class="text-danger mb-0 mt-1">These claims require immediate administrator verification and action.</p>
+                            </div>
+                            <span class="badge bg-danger fs-5 shadow">24 Actions Required</span>
+                        </div>
+                        
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-custom align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ps-4">Request #</th>
+                                                <th>Claim Details</th>
+                                                <th>Reason</th>
+                                                <th>Current Status</th>
+                                                <th class="text-end pe-4">Resolution Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="ret-1">
+                                                <td class="ps-4 fw-bold">#RET-1092<br><small class="text-muted fw-normal">ORD-8942</small></td>
+                                                <td>
+                                                    <p class="mb-0 fw-bold">Kalyan Store (Buyer)</p>
+                                                    <p class="mb-0 small text-muted">Item: Apples (20kg)</p>
+                                                    <a href="#" class="small text-primary text-decoration-none"><i class="fas fa-image me-1"></i>View Uploaded Proof</a>
+                                                </td>
+                                                <td class="text-danger fw-bold"><i class="fas fa-box-open me-1"></i> Damaged in transit</td>
+                                                <td>
+                                                    <span class="badge bg-warning text-dark border border-warning px-3 py-2 rounded-pill"><i class="fas fa-exclamation-circle me-1"></i> Pending Review</span>
+                                                </td>
+                                                <td class="text-end pe-4">
+                                                    <div class="d-flex justify-content-end gap-2">
+                                                        <button class="btn btn-success shadow-sm" onclick="resolveReturn('ret-1', 'Approved')"><i class="fas fa-check me-1"></i> Approve Refund</button>
+                                                        <button class="btn btn-outline-danger shadow-sm" onclick="resolveReturn('ret-1', 'Rejected')"><i class="fas fa-times me-1"></i> Reject Claim</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr id="ret-2">
+                                                <td class="ps-4 fw-bold">#RET-1090<br><small class="text-muted fw-normal">ORD-8850</small></td>
+                                                <td>
+                                                    <p class="mb-0 fw-bold">AgriCorp India (Buyer)</p>
+                                                    <p class="mb-0 small text-muted">Item: Onions (100kg)</p>
+                                                </td>
+                                                <td class="text-danger fw-bold"><i class="fas fa-exchange-alt me-1"></i> Wrong Item Received</td>
+                                                <td>
+                                                    <span class="badge bg-success px-3 py-2 rounded-pill"><i class="fas fa-check-circle me-1"></i> Approved</span>
+                                                </td>
+                                                <td class="text-end pe-4">
+                                                    <button class="btn btn-outline-secondary btn-sm" disabled>Resolved</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', 
+                includedLanguages: 'en,hi,te',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Tab Switcher Helper
+        function switchTab(tabId) {
+            var tabEl = document.getElementById(tabId);
+            var tab = new bootstrap.Tab(tabEl);
+            tab.show();
+        }
+
+        // Functional Mocks
+        function disableItem(rowId, type) {
+            if(confirm('Are you sure you want to disable/remove this ' + type + '?')) {
+                const row = document.getElementById(rowId);
+                row.style.opacity = '0.5';
+                const actionBtn = row.querySelector('.btn-outline-danger, .btn-danger');
+                if(actionBtn) {
+                    actionBtn.innerHTML = '<i class="fas fa-info-circle"></i> Removed';
+                    actionBtn.className = 'btn btn-sm btn-secondary disabled';
+                }
+                const badge = row.querySelector('.badge');
+                if(badge && type === 'User') {
+                    badge.className = 'badge bg-danger';
+                    badge.innerHTML = 'Disabled';
+                }
+            }
+        }
+
+        function resolveReturn(rowId, resolution) {
+            if(confirm('Are you sure you want to ' + resolution.toLowerCase() + ' this claim?')) {
+                const row = document.getElementById(rowId);
+                const statusBadge = row.querySelector('.badge.bg-warning');
+                const actionsCell = row.querySelector('.d-flex.gap-2');
+                
+                if (statusBadge) {
+                    statusBadge.className = 'badge px-3 py-2 rounded-pill ' + (resolution === 'Approved' ? 'bg-success' : 'bg-secondary');
+                    statusBadge.innerHTML = '<i class="fas ' + (resolution === 'Approved' ? 'fa-check-circle' : 'fa-times-circle') + ' me-1"></i> ' + resolution;
+                }
+                
+                if (actionsCell) {
+                    actionsCell.innerHTML = '<button class="btn btn-outline-secondary btn-sm disabled">Resolved</button>';
+                }
+
+                // Update Dashboard Counter slightly for mock effect
+                const counter = document.querySelector('.card.returns-alert h3');
+                if(counter) {
+                    let val = parseInt(counter.innerText) - 1;
+                    counter.innerText = val > 0 ? val : 0;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

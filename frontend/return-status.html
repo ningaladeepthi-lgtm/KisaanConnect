@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Status Tracker | KisaanConnect</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .navbar-brand { font-weight: 700; letter-spacing: 0.5px; }
+
+        /* Horizontal Progress Tracker */
+        .track-container {
+            position: relative;
+            padding: 3rem 0 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* The Connecting Line Background */
+        .track-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background-color: #dee2e6;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        
+        /* The Active Progress Line */
+        .track-progress {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            height: 4px;
+            background-color: #0dcaf0; /* Active Blue */
+            transform: translateY(-50%);
+            z-index: 2;
+            width: 33%; /* Adjust based on current step */
+            transition: width 0.5s ease;
+        }
+
+        .track-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 3;
+            width: 100%;
+        }
+
+        .step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 4px solid #dee2e6;
+            color: #adb5bd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-label {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        /* States */
+        /* Completed Step (Green) */
+        .step.completed .step-icon {
+            border-color: #198754;
+            background-color: #198754;
+            color: #fff;
+        }
+        .step.completed .step-label {
+            color: #198754;
+        }
+
+        /* Active Step (Blue) */
+        .step.active .step-icon {
+            border-color: #0dcaf0;
+            background-color: #fff;
+            color: #0dcaf0;
+            box-shadow: 0 0 0 6px rgba(13, 202, 240, 0.2);
+        }
+        .step.active .step-label {
+            color: #0dcaf0;
+            font-weight: 700;
+        }
+
+        /* Rejected/Failed Step (Red) */
+        .step.rejected .step-icon {
+            border-color: #dc3545;
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .step.rejected .step-label {
+            color: #dc3545;
+        }
+
+        .detail-box {
+            background-color: #fff;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border-left: 5px solid transparent;
+        }
+        .detail-completed { border-left-color: #198754; }
+        .detail-active { border-left-color: #0dcaf0; background-color: #f0fdfa; }
+        
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <nav class="navbar navbar-dark bg-success shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand text-center d-flex align-items-center" href="wholesaler-dashboard.html">
+                <i class="fas fa-arrow-left me-3"></i> Return Status Tracker
+            </a>
+            <span class="text-white fw-bold"><i class="fas fa-headset me-2"></i>Contact Support</span>
+        </div>
+    </nav>
+
+    <div class="container py-5" style="max-width: 900px;">
+        
+        <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
+            <div>
+                <h2 class="fw-bold text-dark m-0">Return Request #RET-1092</h2>
+                <p class="text-muted m-0">Original Order: <strong class="text-dark">#ORD-8942</strong> (Premium Wheat)</p>
+            </div>
+            <button class="btn btn-outline-secondary shadow-sm"><i class="fas fa-print me-2"></i>Print Summary</button>
+        </div>
+
+        <!-- The Horizontal Progress Tracker Card -->
+        <div class="card border-0 shadow-sm p-4 mb-5 rounded-4">
+            
+            <div class="track-container">
+                <!-- The Blue Line showing completion percentage -->
+                <div class="track-progress" id="dynamic-progress" style="width: 33%;"></div>
+                
+                <div class="track-steps">
+                    <!-- Step 1: Raise Request -->
+                    <div class="step completed">
+                        <div class="step-icon"><i class="fas fa-file-signature"></i></div>
+                        <div class="step-label">Raise Request</div>
+                        <small class="text-muted">Oct 24, 10:30 AM</small>
+                    </div>
+
+                    <!-- Step 2: Admin Review (Currently Active) -->
+                    <div class="step active">
+                        <div class="step-icon"><i class="fas fa-user-shield"></i></div>
+                        <div class="step-label">Admin Review</div>
+                        <small class="text-primary fw-bold">In Progress</small>
+                    </div>
+
+                    <!-- Step 3: Approval -->
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-check-double"></i></div>
+                        <div class="step-label">Approval & Pickup</div>
+                        <small class="text-muted">Pending</small>
+                    </div>
+
+                    <!-- Step 4: Refund Completed -->
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-money-check-alt"></i></div>
+                        <div class="step-label">Refund Completed</div>
+                        <small class="text-muted">Pending</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Status Breakdown -->
+            <div class="mt-4 pt-4 border-top">
+                <h5 class="fw-bold mb-4">Detailed Timeline Updates</h5>
+                
+                <div class="detail-box detail-active">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold text-info m-0"><i class="fas fa-spinner fa-spin me-2"></i> Admin Reviewing Claim</h6>
+                        <span class="text-muted small">Just now</span>
+                    </div>
+                    <p class="text-dark m-0">Our quality assurance team is reviewing the transport evidence and the images you uploaded. We will update you shortly.</p>
+                </div>
+
+                <div class="detail-box detail-completed">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold text-success m-0"><i class="fas fa-check-circle me-2"></i> Return Request Submitted Successfully</h6>
+                        <span class="text-muted small">Oct 24, 2026 at 10:30 AM</span>
+                    </div>
+                    <p class="text-dark m-0">Reason provided: <strong>Quality Degradation / Damaged in transit</strong>. <br>3 Image proofs securely uploaded to the system.</p>
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+
+    <!-- Script to simulate tracker progression (Optional Interactive UI Demo) -->
+    <script>
+        // Example logic to move the progress bar horizontally for demo purposes if clicked
+        let currentStep = 2; // Starts at step 2 (Admin Review) out of 4
+        
+        function advanceTracker() {
+            const steps = document.querySelectorAll('.step');
+            const progress = document.getElementById('dynamic-progress');
+            
+            if (currentStep < 4) {
+                // Update previous step to completed
+                steps[currentStep-1].classList.remove('active');
+                steps[currentStep-1].classList.add('completed');
+                steps[currentStep-1].querySelector('.text-primary').innerText = 'Completed';
+                steps[currentStep-1].querySelector('.text-primary').className = 'text-muted';
+                
+                // Update current step to active
+                steps[currentStep].classList.add('active');
+                steps[currentStep].querySelector('small').innerText = 'In Progress';
+                steps[currentStep].querySelector('small').className = 'text-primary fw-bold';
+                
+                // Update line width percentage
+                const percentage = (currentStep / 3) * 100;
+                progress.style.width = percentage + '%';
+                
+                currentStep++;
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

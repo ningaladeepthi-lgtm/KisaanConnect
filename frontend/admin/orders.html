@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Orders - Admin Panel | KisaanConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fa-solid fa-leaf"></i> KisaanConnect</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="users.html" class="nav-item"><i class="fa-solid fa-users"></i> Users</a>
+                <a href="crops.html" class="nav-item"><i class="fa-solid fa-seedling"></i> Crops</a>
+                <a href="orders.html" class="nav-item active"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
+                <a href="return-requests.html" class="nav-item"><i class="fa-solid fa-arrow-rotate-left"></i> Returns</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="search-bar">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search by Order ID or Customer Name...">
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">A</div>
+                    <span style="font-weight: 500;">System Admin</span>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h1 class="page-title">Manage Orders</h1>
+                    <button class="btn btn-primary"><i class="fa-solid fa-file-export"></i> Export CSV</button>
+                </div>
+
+                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="stat-card">
+                        <div class="stat-icon primary"><i class="fa-solid fa-box"></i></div>
+                        <div class="stat-details">
+                            <h3>Total Orders</h3>
+                            <div class="value">12,456</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon warning"><i class="fa-solid fa-spinner"></i></div>
+                        <div class="stat-details">
+                            <h3>In Progress</h3>
+                            <div class="value">342</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon secondary"><i class="fa-solid fa-truck-fast"></i></div>
+                        <div class="stat-details">
+                            <h3>In Transit</h3>
+                            <div class="value">128</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon danger"><i class="fa-solid fa-ban"></i></div>
+                        <div class="stat-details">
+                            <h3>Cancelled</h3>
+                            <div class="value">89</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>All Orders</h3>
+                        <div class="table-actions">
+                            <select class="btn btn-outline" style="appearance: auto;">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="processing">Processing</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="delivered">Delivered</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer Details</th>
+                                <th>Products</th>
+                                <th>Total Value</th>
+                                <th>Payment Mode</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div style="font-weight: 600;">#ORD-8942</div><small class="text-muted">Today, 10:42 AM</small></td>
+                                <td>Ramesh Kumar<br><small class="text-muted">ramesh@example.com</small></td>
+                                <td>Organic Wheat (50kg)</td>
+                                <td>₹2,450</td>
+                                <td>UPI</td>
+                                <td><span class="badge badge-success">Delivered</span></td>
+                                <td>
+                                    <button class="btn btn-outline" title="Verify Details"><i class="fa-regular fa-file-lines"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div style="font-weight: 600;">#ORD-8941</div><small class="text-muted">Today, 09:15 AM</small></td>
+                                <td>Priya Enterprises<br><small class="text-muted">contact@priya.com</small></td>
+                                <td>Basmati Rice (500kg)</td>
+                                <td>₹41,000</td>
+                                <td>Bank Transfer</td>
+                                <td><span class="badge badge-warning">Processing</span></td>
+                                <td>
+                                    <button class="btn btn-outline" title="Verify Details"><i class="fa-regular fa-file-lines"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div style="font-weight: 600;">#ORD-8940</div><small class="text-muted">Yesterday, 04:30 PM</small></td>
+                                <td>Amit Singh<br><small class="text-muted">amit.s@gmail.com</small></td>
+                                <td>Fresh Tomatoes (20kg)</td>
+                                <td>₹800</td>
+                                <td>Cash on Delivery</td>
+                                <td><span class="badge badge-info">Shipped</span></td>
+                                <td>
+                                    <button class="btn btn-outline" title="Verify Details"><i class="fa-regular fa-file-lines"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/admin.js"></script>
+</body>
+</html>

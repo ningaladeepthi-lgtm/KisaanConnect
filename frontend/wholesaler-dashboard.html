@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wholesaler Dashboard | KisaanConnect</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .navbar-brand { font-weight: 700; letter-spacing: 0.5px; }
+        
+        /* Sidebar/Navigation */
+        .sidebar-menu .nav-link {
+            color: #495057;
+            font-weight: 500;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+        .sidebar-menu .nav-link:hover {
+            background-color: #e9ecef;
+            color: #198754;
+        }
+        .sidebar-menu .nav-link.active {
+            background-color: #e8f5e9;
+            color: #198754;
+            font-weight: 600;
+            border-left: 4px solid #198754;
+        }
+        
+        /* Cards */
+        .crop-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .crop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+        .crop-img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 1rem 0;
+            list-style: none;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 20px;
+            width: 2px;
+            background: #e9ecef;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 3rem;
+        }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-icon {
+            position: absolute;
+            left: 10px;
+            top: 0;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid #dee2e6;
+        }
+        /* Status Colors */
+        .status-requested .timeline-icon { border-color: #ffc107; background: #ffc107; } /* Yellow */
+        .status-pending .timeline-icon { border-color: #0dcaf0; background: #0dcaf0; } /* Blue/Cyan */
+        .status-approved .timeline-icon { border-color: #198754; background: #198754; } /* Green */
+        .status-refunded .timeline-icon { border-color: #dc3545; background: #dc3545; } /* Red (or Purple) */
+        
+        .timeline-content {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="#"><i class="fas fa-leaf me-2"></i>KisaanConnect</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                <div id="google_translate_element"></div>
+                <div class="text-white text-end d-none d-md-block">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#"><i class="fas fa-bell"></i></a>
+                    </li>
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle text-white fw-medium d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <div class="bg-white text-success rounded-circle d-flex justify-content-center align-items-center me-2 fw-bold" style="width: 35px; height: 35px;">A</div>
+                            AgriCorp India
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="index.html">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="container-fluid my-4 px-4">
+        <div class="row">
+            
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-2 col-md-3 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-2">
+                        <div class="nav flex-column sidebar-menu" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            <button class="nav-link text-start active" id="tab-dashboard" data-bs-toggle="pill" data-bs-target="#view-dashboard" type="button" role="tab">
+                                <i class="fas fa-store me-2"></i> <span class="nav-text">Marketplace</span>
+                            </button>
+                            <button class="nav-link text-start" id="tab-orders" data-bs-toggle="pill" data-bs-target="#view-orders" type="button" role="tab">
+                                <i class="fas fa-box me-2"></i> <span class="nav-text">My Orders</span>
+                            </button>
+                            <button class="nav-link text-start" id="tab-checkout" data-bs-toggle="pill" data-bs-target="#view-checkout" type="button" role="tab">
+                                <i class="fas fa-credit-card me-2"></i> <span class="nav-text">Payment Checkout</span>
+                            </button>
+                            <button class="nav-link text-start" id="tab-return-req" data-bs-toggle="pill" data-bs-target="#view-return-req" type="button" role="tab">
+                                <i class="fas fa-file-signature me-2"></i> <span class="nav-text">Return Request</span>
+                            </button>
+                            <button class="nav-link text-start" id="tab-returns" data-bs-toggle="pill" data-bs-target="#view-returns" type="button" role="tab">
+                                <i class="fas fa-clipboard-list me-2"></i> <span class="nav-text">Return Status</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-lg-10 col-md-9">
+                <div class="tab-content" id="v-pills-tabContent">
+                    
+                    <!-- ================= MARKETPLACE VIEW ================= -->
+                    <div class="tab-pane fade show active" id="view-dashboard" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                            <h2 class="text-success m-0 fw-bold"><i class="fas fa-seedling me-2"></i> Crop Listings</h2>
+                        </div>
+                        
+                        <!-- Filters -->
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-5">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-success text-success"><i class="fas fa-map-marker-alt"></i></span>
+                                            <select class="form-select border-success shadow-none" id="filter-location">
+                                                <option value="all">Filter by Location: All (AP & TS)</option>
+                                                <optgroup label="Telangana">
+                                                    <option value="warangal">Warangal</option>
+                                                    <option value="karimnagar">Karimnagar</option>
+                                                    <option value="khammam">Khammam</option>
+                                                    <option value="nizamabad">Nizamabad</option>
+                                                    <option value="nalgonda">Nalgonda</option>
+                                                </optgroup>
+                                                <optgroup label="Andhra Pradesh">
+                                                    <option value="guntur">Guntur</option>
+                                                    <option value="vijayawada">Vijayawada Rural</option>
+                                                    <option value="nellore">Nellore</option>
+                                                    <option value="kurnool">Kurnool</option>
+                                                    <option value="anantapur">Anantapur</option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white border-success text-success"><i class="fas fa-wheat-awn"></i></span>
+                                            <select class="form-select border-success shadow-none" id="filter-crop">
+                                                <option value="all">Filter by Crop Type: All</option>
+                                                <option value="wheat">Wheat (Premium Sharbati)</option>
+                                                <option value="rice">Rice (Basmati)</option>
+                                                <option value="cotton">Cotton</option>
+                                                <option value="sugarcane">Sugarcane</option>
+                                                <option value="maize">Maize</option>
+                                                <option value="groundnut">Groundnut</option>
+                                                <option value="redgram">Red Gram (Tur Dal)</option>
+                                                <option value="soybean">Soybean</option>
+                                                <option value="turmeric">Turmeric</option>
+                                                <option value="chillies">Red Chillies</option>
+                                                <option value="onion">Red Onion</option>
+                                                <option value="paddy">Paddy</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-success w-100" onclick="applyFilters()">Apply Filters</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Crop Grid -->
+                        <div class="row g-4" id="crop-grid">
+                            <!-- Card 1 -->
+                            <div class="col-xl-3 col-lg-4 col-md-6 crop-item" data-location="pune" data-crop="wheat">
+                                <div class="card crop-card h-100 shadow-sm">
+                                    <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=400" class="crop-img" alt="Wheat">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title fw-bold mb-0">Premium Wheat</h5>
+                                            <span class="badge bg-success">Verified</span>
+                                        </div>
+                                        <h4 class="text-success fw-bold mb-3">₹2,100 <small class="text-muted fs-6 fw-normal">/ Quintal</small></h4>
+                                        <div class="text-muted small mb-3 flex-grow-1">
+                                            <p class="mb-1"><i class="fas fa-user-circle me-1"></i> Farmer: Ramesh Kumar</p>
+                                            <p class="mb-1"><i class="fas fa-map-marker-alt me-1"></i> Pune, Maharashtra</p>
+                                            <p class="mb-1"><i class="fas fa-box me-1"></i> Available: 50 Quintals</p>
+                                        </div>
+                                        <div class="d-grid gap-2 mt-auto">
+                                            <button class="btn btn-outline-success btn-sm"><i class="fas fa-phone me-1"></i> Contact Farmer</button>
+                                            <button class="btn btn-success" onclick="buyCrop(this, 'Premium Wheat')"><i class="fas fa-cart-plus me-1"></i> Buy Now</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 2 -->
+                            <div class="col-xl-3 col-lg-4 col-md-6 crop-item" data-location="nashik" data-crop="onion">
+                                <div class="card crop-card h-100 shadow-sm">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Red_Onion_on_White.JPG" class="crop-img" alt="Red Onion" style="object-fit: cover; object-position: center;">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title fw-bold mb-0">Red Onion</h5>
+                                            <span class="badge bg-success">Verified</span>
+                                        </div>
+                                        <h4 class="text-success fw-bold mb-3">₹1,800 <small class="text-muted fs-6 fw-normal">/ Quintal</small></h4>
+                                        <div class="text-muted small mb-3 flex-grow-1">
+                                            <p class="mb-1"><i class="fas fa-user-circle me-1"></i> Farmer: Santosh Patil</p>
+                                            <p class="mb-1"><i class="fas fa-map-marker-alt me-1"></i> Nashik, Maharashtra</p>
+                                            <p class="mb-1"><i class="fas fa-box me-1"></i> Available: 120 Quintals</p>
+                                        </div>
+                                        <div class="d-grid gap-2 mt-auto">
+                                            <button class="btn btn-outline-success btn-sm"><i class="fas fa-phone me-1"></i> Contact Farmer</button>
+                                            <button class="btn btn-success" onclick="buyCrop(this, 'Red Onion')"><i class="fas fa-cart-plus me-1"></i> Buy Now</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 3 -->
+                            <div class="col-xl-3 col-lg-4 col-md-6 crop-item" data-location="nagpur" data-crop="cotton">
+                                <div class="card crop-card h-100 shadow-sm">
+                                    <img src="https://images.unsplash.com/photo-1581404077853-2c1b8535a909?auto=format&fit=crop&q=80&w=400" class="crop-img" alt="Cotton">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title fw-bold mb-0">Organic Cotton</h5>
+                                            <span class="badge bg-secondary">Standard</span>
+                                        </div>
+                                        <h4 class="text-success fw-bold mb-3">₹7,200 <small class="text-muted fs-6 fw-normal">/ Quintal</small></h4>
+                                        <div class="text-muted small mb-3 flex-grow-1">
+                                            <p class="mb-1"><i class="fas fa-user-circle me-1"></i> Farmer: Amit Deshmukh</p>
+                                            <p class="mb-1"><i class="fas fa-map-marker-alt me-1"></i> Nagpur, Maharashtra</p>
+                                            <p class="mb-1"><i class="fas fa-box me-1"></i> Available: 30 Quintals</p>
+                                        </div>
+                                        <div class="d-grid gap-2 mt-auto">
+                                            <button class="btn btn-outline-success btn-sm"><i class="fas fa-phone me-1"></i> Contact Farmer</button>
+                                            <button class="btn btn-success" onclick="buyCrop(this, 'Organic Cotton')"><i class="fas fa-cart-plus me-1"></i> Buy Now</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= MY ORDERS VIEW ================= -->
+                    <div class="tab-pane fade" id="view-orders" role="tabpanel">
+                        <h2 class="text-success mb-4 fw-bold"><i class="fas fa-box-open me-2"></i> My Orders</h2>
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="table-light text-muted">
+                                            <tr>
+                                                <th class="ps-4">Order ID</th>
+                                                <th>Crop Details</th>
+                                                <th>Farmer</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                                <th class="text-end pe-4">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="ps-4 fw-bold">#ORD-8942</td>
+                                                <td><i class="fas fa-seedling text-success me-2"></i> Premium Wheat (50 Qtl)</td>
+                                                <td>Ramesh Kumar</td>
+                                                <td class="fw-bold text-success">₹1,05,000</td>
+                                                <td><span class="badge bg-success rounded-pill px-3 py-2">Delivered</span></td>
+                                                <td class="text-end pe-4">
+                                                    <button class="btn btn-sm btn-outline-danger shadow-sm" onclick="goToReturns('ORD-8942')"><i class="fas fa-undo me-1"></i> Raise Return</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="ps-4 fw-bold">#ORD-8910</td>
+                                                <td><i class="fas fa-seedling text-success me-2"></i> Red Onion (120 Qtl)</td>
+                                                <td>Santosh Patil</td>
+                                                <td class="fw-bold text-success">₹2,16,000</td>
+                                                <td><span class="badge bg-info text-dark rounded-pill px-3 py-2">In Transit</span></td>
+                                                <td class="text-end pe-4">
+                                                    <button class="btn btn-sm btn-outline-secondary shadow-sm"><i class="fas fa-truck me-1"></i> Track</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="ps-4 fw-bold">#ORD-8850</td>
+                                                <td><i class="fas fa-seedling text-success me-2"></i> Organic Cotton (10 Qtl)</td>
+                                                <td>Amit Deshmukh</td>
+                                                <td class="fw-bold text-success">₹72,000</td>
+                                                <td><span class="badge bg-warning text-dark rounded-pill px-3 py-2">Processing</span></td>
+                                                <td class="text-end pe-4">
+                                                    <button class="btn btn-sm btn-outline-secondary shadow-sm"><i class="fas fa-file-invoice me-1"></i> Invoice</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= PAYMENT CHECKOUT VIEW ================= -->
+                    <div class="tab-pane fade" id="view-checkout" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="text-success m-0 fw-bold"><i class="fas fa-lock me-2"></i> Secure Checkout</h2>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-7">
+                                <form class="card border-0 shadow-sm p-4 h-100" onsubmit="event.preventDefault(); completePaymentFlow(document.getElementById('btn-proceed-pay'));">
+                                    <h5 class="fw-bold mb-3 border-bottom pb-2">Delivery Details</h5>
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold text-muted small">Receiving Warehouse Address</label>
+                                        <textarea class="form-control hover-shadow transition" rows="2" required placeholder="Enter full delivery address..."></textarea>
+                                    </div>
+
+                                    <h5 class="fw-bold mb-3">Choose Payment Method</h5>
+                                    <div class="row g-3">
+                                        <div class="col-sm-6">
+                                            <div class="card h-100 p-3 text-center border-success bg-light payment-card" style="cursor: pointer;" onclick="showDynamicToast('UPI Selected'); document.getElementById('btn-proceed-pay').disabled=false; document.getElementById('qr-container').classList.remove('d-none');">
+                                                <i class="fas fa-qrcode fs-1 text-primary mb-2"></i>
+                                                <h6 class="fw-bold m-0">Online (UPI / QR)</h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="card h-100 p-3 text-center bg-light payment-card" style="cursor: pointer;" onclick="showDynamicToast('COD Selected'); document.getElementById('btn-proceed-pay').disabled=false; document.getElementById('qr-container').classList.add('d-none');">
+                                                <i class="fas fa-money-bill-wave fs-1 text-success mb-2"></i>
+                                                <h6 class="fw-bold m-0">Offline (Cash/Cheque)</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Dynamic QR Container -->
+                                    <div id="qr-container" class="d-none mt-4 text-center border border-success border-opacity-25 rounded p-3 bg-white shadow-sm">
+                                        <h6 class="fw-bold text-success mb-3">Scan to Pay securely via Escrow</h6>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="UPI QR Code" class="img-fluid border border-2 shadow-sm rounded mb-2" style="max-width: 150px;">
+                                        <p class="small text-muted mb-0 fw-medium">Merchant: KisaanConnect Escrow Nodal Account</p>
+                                    </div>
+
+                                    <div class="mt-4 text-end border-top pt-3 mt-auto">
+                                        <button type="submit" class="btn btn-success fw-bold px-4 hover-shadow" id="btn-proceed-pay" disabled>Verify & Pay</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="card border-0 shadow-sm p-4 h-100">
+                                    <h5 class="fw-bold mb-3 border-bottom pb-2">Order Summary</h5>
+                                    <div class="d-flex justify-content-between mb-2"><span class="fw-bold text-success" id="checkout-crop-name">Premium Wheat</span><span>₹10,500</span></div>
+                                    <div class="d-flex justify-content-between mb-2 text-muted small"><span>Platform Fee</span><span>₹210</span></div>
+                                    <div class="d-flex justify-content-between mb-3 text-muted small"><span>Logistics</span><span>₹1,500</span></div>
+                                    <div class="d-flex justify-content-between fw-bold fs-5 text-success border-top pt-2 mt-auto"><span>Total Pay</span><span>₹12,210</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= RETURN REQUEST VIEW ================= -->
+                    <div class="tab-pane fade" id="view-return-req" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="text-danger m-0 fw-bold"><i class="fas fa-undo-alt me-2"></i> Initiate Return Request</h2>
+                        </div>
+                        <div class="card border-0 shadow-sm p-4 mx-auto" style="max-width: 800px;">
+                            <form onsubmit="event.preventDefault(); document.getElementById('tab-returns').click(); showDynamicToast('Return requested successfully! Review timeline under Return Status.', 'success');">
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-muted">Select Delivered Order</label>
+                                    <select class="form-select shadow-none border-secondary" required>
+                                        <option value="">-- Choose Order --</option>
+                                        <option>#ORD-8942 - Premium Wheat</option>
+                                        <option>#ORD-8910 - Red Onion</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-muted">Reason for Return</label>
+                                    <select class="form-select shadow-none border-secondary" required>
+                                        <option value="">-- Select Reason --</option>
+                                        <option>Quality Degradation before delivery</option>
+                                        <option>Wrong Item or Grade Mismatch</option>
+                                        <option>Quantity Deficit</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-muted">Upload Photographic Evidence</label>
+                                    <div class="border border-dashed p-4 text-center rounded bg-light border-secondary">
+                                        <i class="fas fa-cloud-upload-alt text-muted mb-2 fs-2"></i>
+                                        <p class="small text-muted mb-2">Drag and drop images here, or browse.</p>
+                                        <input type="file" class="form-control w-50 mx-auto" multiple required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-danger w-100 fw-bold py-2 shadow-sm">Submit Verification Request</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- ================= RETURN SYSTEM VIEW ================= -->
+                    <div class="tab-pane fade" id="view-returns" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                            <h2 class="text-danger m-0 fw-bold"><i class="fas fa-undo-alt me-2"></i> Returns Center</h2>
+                            <button class="btn btn-danger shadow" data-bs-toggle="modal" data-bs-target="#newReturnModal"><i class="fas fa-plus-circle me-1"></i> Raise New Request</button>
+                        </div>
+
+                        <div class="row g-4">
+                            <!-- Tracker Section -->
+                            <div class="col-lg-7">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-header bg-white border-bottom pb-3 pt-4 px-4">
+                                        <h5 class="fw-bold text-dark m-0">Return Status Tracker</h5>
+                                        <p class="text-muted small m-0">Live timeline of your active returns</p>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        
+                                        <!-- Active Return Tracker -->
+                                        <div class="bg-light p-3 rounded-3 mb-4 border">
+                                            <h6 class="fw-bold">Request #RET-1092 <span class="text-muted fw-normal ms-2">(Order: #ORD-8942)</span></h6>
+                                            <p class="small text-muted mb-0">Reason: Damaged in transit</p>
+                                        </div>
+
+                                        <ul class="timeline">
+                                            <!-- Step 1 -->
+                                            <li class="timeline-item status-requested">
+                                                <div class="timeline-icon"></div>
+                                                <div class="timeline-content">
+                                                    <h6 class="fw-bold mb-1"><span class="badge bg-warning text-dark me-2">Requested</span> Return Initiated</h6>
+                                                    <p class="text-muted small mb-0">Oct 24, 2026 at 10:30 AM <br> You raised a request and uploaded images.</p>
+                                                </div>
+                                            </li>
+                                            <!-- Step 2 -->
+                                            <li class="timeline-item status-pending">
+                                                <div class="timeline-icon"></div>
+                                                <div class="timeline-content border-info">
+                                                    <h6 class="fw-bold mb-1"><span class="badge bg-info text-dark me-2">Pending</span> Admin Reviewing</h6>
+                                                    <p class="text-muted small mb-0">Oct 24, 2026 at 11:15 AM <br> The admin team is verifying your evidence with the logistics partner.</p>
+                                                </div>
+                                            </li>
+                                            <!-- Step 3 (Future) -->
+                                            <li class="timeline-item" style="opacity: 0.5;">
+                                                <div class="timeline-icon"></div>
+                                                <div class="timeline-content bg-transparent border-dashed">
+                                                    <h6 class="fw-bold mb-1"><span class="badge bg-success me-2"><i class="fas fa-check"></i></span> Approval & Pickup</h6>
+                                                    <p class="text-muted small mb-0">Awaiting clearance</p>
+                                                </div>
+                                            </li>
+                                            <!-- Step 4 (Future) -->
+                                            <li class="timeline-item" style="opacity: 0.5;">
+                                                <div class="timeline-icon"></div>
+                                                <div class="timeline-content bg-transparent border-dashed">
+                                                    <h6 class="fw-bold mb-1"><span class="badge bg-danger me-2"><i class="fas fa-rupee-sign"></i></span> Refund Processed</h6>
+                                                    <p class="text-muted small mb-0">Awaiting return delivery</p>
+                                                </div>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- History Section -->
+                            <div class="col-lg-5">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-header bg-white border-bottom pb-3 pt-4 px-4">
+                                        <h5 class="fw-bold text-dark m-0">History</h5>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item p-4">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <h6 class="fw-bold mb-1">#RET-1080</h6>
+                                                        <small class="text-muted">Order: #ORD-8850</small>
+                                                    </div>
+                                                    <span class="badge bg-danger rounded-pill px-3">Refunded</span>
+                                                </div>
+                                                <p class="small text-muted mb-0">₹54,000 refunded to primary bank account on Oct 18, 2026.</p>
+                                            </li>
+                                            <li class="list-group-item p-4">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <h6 class="fw-bold mb-1">#RET-1062</h6>
+                                                        <small class="text-muted">Order: #ORD-8821</small>
+                                                    </div>
+                                                    <span class="badge bg-secondary rounded-pill px-3">Rejected</span>
+                                                </div>
+                                                <p class="small text-muted mb-0">Return window had expired. Closed on Oct 05, 2026.</p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- Payment Checkout Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg border-top border-success border-4">
+                <div class="modal-header bg-dark text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-credit-card me-2 text-warning"></i> Secure Payment Checkout</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="row g-4">
+                        <div class="col-md-5 border-end pe-md-4">
+                            <h5 class="fw-bold mb-3 text-dark border-bottom pb-2">Order Summary</h5>
+                            <p class="mb-1 text-muted small">Item:</p>
+                            <h6 class="fw-bold text-success mb-3" id="checkoutItemName">Crop</h6>
+                            <p class="mb-1 text-muted small">Quantity/Delivery terms as per listing.</p>
+                            
+                            <div class="bg-success bg-opacity-10 p-3 rounded border border-success border-opacity-25 mt-4">
+                                <span class="text-dark fw-bold mb-1 d-block"><i class="fas fa-shield-alt text-success me-1"></i> Escrow Protection</span>
+                                <span class="small text-muted fw-bold">Funds held safely until delivery.</span>
+                            </div>
+                        </div>
+                        <div class="col-md-7 ps-md-4">
+                            <form onsubmit="completePayment(event)">
+                                <h6 class="fw-bold mb-3 text-dark border-bottom pb-2">Billing Details</h6>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-muted small">Delivery Address</label>
+                                    <textarea class="form-control" rows="2" required placeholder="Enter warehouse address..."></textarea>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-muted small">Payment Method</label>
+                                    <select class="form-select" required>
+                                        <option value="upi">UPI Transfer</option>
+                                        <option value="netbanking">Net Banking</option>
+                                        <option value="wallet">KisaanConnect Wallet Balance</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100 fw-bold py-2 shadow" id="btn-pay-confirm">Authorise Secure Payment <i class="fas fa-lock ms-1"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Raise Return Modal -->
+    <div class="modal fade" id="newReturnModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-danger text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-undo-alt me-2"></i> Raise Return Request</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="return-form" onsubmit="submitReturn(event)">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted">Select Delivered Order</label>
+                            <select class="form-select shadow-none" id="return-order" required>
+                                <option value="">-- Choose an Order --</option>
+                                <option value="ORD-8942">#ORD-8942 - Premium Wheat (50 Qtl)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted">Reason for Return</label>
+                            <select class="form-select shadow-none" required>
+                                <option value="">-- Select Reason --</option>
+                                <option value="damaged">Quality Degradation / Damaged in transit</option>
+                                <option value="wrong_item">Wrong Item Received</option>
+                                <option value="quantity">Quantity Mismatch</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted">Detailed Explanation</label>
+                            <textarea class="form-control shadow-none" rows="3" placeholder="Describe the issue..." required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted">Upload Proof (Images)</label>
+                            <input type="file" class="form-control" accept="image/*" multiple required>
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100 fw-bold py-2 shadow">Submit Request</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+        <div id="actionToast" class="toast align-items-center text-white bg-success border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-medium" id="actionToastMsg"><i class="fas fa-check-circle me-2"></i> Action Success</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', 
+                includedLanguages: 'en,hi,te',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Localization mock
+        const translations = {
+            'en': { nav_market: 'Marketplace', nav_orders: 'My Orders', nav_returns: 'Return System' },
+            'hi': { nav_market: 'बाज़ार', nav_orders: 'मेरे आदेश', nav_returns: 'वापसी प्रणाली' },
+            'te': { nav_market: 'మార్కెట్', nav_orders: 'నా ఆర్డర్లు', nav_returns: 'తిరిగి ఇచ్చే వ్యవస్థ' }
+        };
+
+        document.getElementById('lang-switch').addEventListener('change', function(e) {
+            const lang = e.target.value;
+            const textNodes = document.querySelectorAll('.nav-text');
+            if(translations[lang]) {
+                textNodes[0].style.opacity = '0'; textNodes[1].style.opacity = '0'; textNodes[2].style.opacity = '0';
+                setTimeout(() => {
+                    textNodes[0].innerText = translations[lang].nav_market;
+                    textNodes[1].innerText = translations[lang].nav_orders;
+                    textNodes[2].innerText = translations[lang].nav_returns;
+                    textNodes[0].style.opacity = '1'; textNodes[1].style.opacity = '1'; textNodes[2].style.opacity = '1';
+                }, 200);
+            }
+        });
+
+        // Toast Helper
+        function showDynamicToast(msg, type = 'success') {
+            const toastEl = document.getElementById('actionToast');
+            const msgEl = document.getElementById('actionToastMsg');
+            msgEl.innerHTML = `<i class="fas fa-info-circle me-2"></i> ${msg}`;
+            toastEl.className = `toast align-items-center text-white border-0 shadow bg-${type}`;
+            const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            toast.show();
+        }
+
+        // Functional Filter Logic with Smooth Fade
+        function applyFilters() {
+            const btn = document.querySelector('button[onclick="applyFilters()"]');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Applying...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const loc = document.getElementById('filter-location').value;
+                const crop = document.getElementById('filter-crop').value;
+                const items = document.querySelectorAll('.crop-item');
+                
+                let visibleCount = 0;
+                items.forEach(item => {
+                    item.style.transition = "opacity 0.4s, transform 0.4s";
+                    const itemLoc = item.getAttribute('data-location');
+                    const itemCrop = item.getAttribute('data-crop');
+                    
+                    if ((loc === 'all' || loc === itemLoc) && (crop === 'all' || crop === itemCrop)) {
+                        item.style.display = 'block';
+                        setTimeout(() => { item.style.opacity = '1'; item.style.transform = 'scale(1)'; }, 50);
+                        visibleCount++;
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'scale(0.95)';
+                        setTimeout(() => { item.style.display = 'none'; }, 400);
+                    }
+                });
+                
+                btn.innerHTML = 'Apply Filters';
+                btn.disabled = false;
+                
+                if(visibleCount === 0) {
+                   showDynamicToast('No crops found matching these filters.', 'warning');
+                } else {
+                   showDynamicToast(`Showing ${visibleCount} filtered crops.`);
+                }
+            }, 600);
+        }
+
+        // Action Handlers with Spinners
+        function buyCrop(btnEl, cropName) {
+            const originalHTML = btnEl.innerHTML;
+            btnEl.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Processing...';
+            btnEl.disabled = true;
+            
+            setTimeout(() => {
+                btnEl.innerHTML = originalHTML;
+                btnEl.disabled = false;
+                
+                document.getElementById('checkout-crop-name').innerText = cropName;
+                document.getElementById('tab-checkout').click();
+            }, 800);
+        }
+
+        function completePaymentFlow(btn) {
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Submitting via Escrow...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                showDynamicToast('Payment Verified! Transferred to Orders.', 'success');
+                btn.innerHTML = 'Proceed to Pay';
+                document.getElementById('tab-orders').click();
+            }, 1500);
+        }
+
+        // Ensure "Buy Now" buttons pass `this` correctly
+        document.querySelectorAll('button[onclick^="buyCrop"]').forEach(btn => {
+            const attr = btn.getAttribute('onclick');
+            // Assuming the attribute looks like `buyCrop('Crop Name')`
+            const cropName = attr.match(/'([^']+)'/)[1];
+            btn.setAttribute('onclick', `buyCrop(this, '${cropName}')`);
+        });
+
+        function goToReturns(orderId) {
+            var triggerEl = document.querySelector('#tab-returns');
+            var tab = new bootstrap.Tab(triggerEl);
+            tab.show();
+            
+            document.getElementById('return-order').value = orderId;
+            var myModal = new bootstrap.Modal(document.getElementById('newReturnModal'));
+            myModal.show();
+        }
+
+        function submitReturn(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Submitting...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                showDynamicToast('Return request filed successfully! Tracker updated.');
+                
+                var myModalEl = document.getElementById('newReturnModal');
+                var modal = bootstrap.Modal.getInstance(myModalEl);
+                modal.hide();
+                e.target.reset();
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

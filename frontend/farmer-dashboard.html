@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Dashboard | KisaanConnect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; overscroll-behavior: none; }
+        .dashboard-card { border: none; border-radius: 12px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s; cursor: pointer; background: #ffffff; border-left: 4px solid transparent; }
+        .dashboard-card:hover { transform: translateY(-7px) scale(1.01); box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important; border-left: 4px solid #198754; z-index: 2; }
+        .card-icon { font-size: 2.5rem; color: #198754; margin-bottom: 1rem; transition: transform 0.3s ease, color 0.3s; }
+        .dashboard-card:hover .card-icon { color: #146c43; transform: scale(1.1); }
+        .hero-bg { background: linear-gradient(135deg, #198754 0%, #20c997 100%); color: white; padding: 2.5rem 0; margin-bottom: 3rem; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 15px rgba(25,135,84,0.2); animation: fadeInDown 0.8s ease-out; }
+        .section-title { color: #198754; font-weight: 600; margin-bottom: 1.5rem; border-bottom: 2px solid #e9ecef; padding-bottom: 0.5rem; }
+        .btn-book-equipment { background-color: #ffc107; color: #212529; font-weight: 600; border: none; padding: 0.6rem 1.5rem; border-radius: 8px; transition: transform 0.2s, box-shadow 0.2s; }
+        .btn-book-equipment:hover { background-color: #e0a800; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,193,7,0.4); }
+        
+        /* Loading Overlay inside Card */
+        .card-loader { position: absolute; inset: 0; background: rgba(255,255,255,0.9); border-radius: 12px; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 10; }
+        .dashboard-card.loading .card-loader { opacity: 1; pointer-events: auto; }
+        
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-block { animation: fadeInDown 0.6s ease-out backwards; }
+        .dly-1 { animation-delay: 0.1s; } .dly-2 { animation-delay: 0.2s; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#"><i class="fas fa-leaf me-2 text-warning"></i>KisaanConnect</a>
+            <div class="d-flex align-items-center gap-3">
+                <div id="google_translate_element"></div>
+                <a class="text-white" href="#"><i class="fas fa-bell"></i></a>
+                <div class="dropdown">
+                    <a class="text-white text-decoration-none dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                        <div class="bg-white text-success rounded-circle d-flex align-items-center justify-content-center me-2 fw-bold" style="width: 32px; height: 32px;">R</div>
+                        <span class="d-none d-sm-inline">Ramesh K.</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                        <li><a class="dropdown-item text-danger" href="index.html">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-bg text-center">
+        <div class="container">
+            <h1 class="display-6 fw-bold mb-2">Welcome Back, Ramesh!</h1>
+            <p class="mb-0 opacity-75">Manage your crops, equipment, and farm operations smoothly.</p>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <div class="container pb-5">
+        <!-- CROPS SECTION -->
+        <div class="row mb-5 fade-block">
+            <div class="col-12"><h2 class="section-title"><i class="fas fa-seedling me-2"></i>Crops Management</h2></div>
+            
+            <div class="col-md-4 col-sm-12 mb-4">
+                <div class="card h-100 dashboard-card p-4 text-center position-relative" data-bs-toggle="modal" data-bs-target="#listCropModal">
+                    <div class="card-loader"><div class="spinner-border text-success"></div></div>
+                    <div class="card-icon"><i class="fas fa-tags"></i></div>
+                    <h5 class="fw-bold mb-2">Crop Listing</h5>
+                    <p class="text-muted small mb-0">Create new listings for wholesalers and manage inventory.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 col-sm-12 mb-4">
+                <div class="card h-100 dashboard-card p-4 text-center position-relative" data-bs-toggle="modal" data-bs-target="#bidsModal" onclick="renderBids()">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white d-none" id="bidsBadge">New</span>
+                    <div class="card-icon"><i class="fas fa-handshake"></i></div>
+                    <h5 class="fw-bold mb-2">Wholesaler Bids</h5>
+                    <p class="text-muted small mb-0">Review offers made by verified buyers.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 col-sm-12 mb-4">
+                <div class="card h-100 dashboard-card p-4 text-center bg-success bg-opacity-10 position-relative" onclick="generateSmartPrice(true)">
+                    <div class="card-loader"><div class="spinner-border text-success"></div></div>
+                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                    <h5 class="fw-bold text-success mb-2">Smart Pricing</h5>
+                    <p class="text-muted small mb-0">Check optimal market rates and yields.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- EQUIPMENT SECTION -->
+        <div class="row fade-block dly-1">
+            <div class="col-12 mb-4 pb-2 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <h2 class="section-title border-0 mb-0 px-0 pb-0 flex-grow-1"><i class="fas fa-tractor me-2"></i>Equipment Hub</h2>
+            </div>
+            
+            <!-- Category 1: List Equipment -->
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card h-100 dashboard-card p-4 text-center position-relative border-success border-opacity-25" style="background-color: #f6fdf9;" data-bs-toggle="modal" data-bs-target="#listEqModal">
+                    <div class="card-icon text-success"><i class="fas fa-plus-circle"></i></div>
+                    <h5 class="fw-bold text-success mb-2">1. List Equipment</h5>
+                    <p class="text-muted small mb-0">List your tractors or farm tools for nearby renting.</p>
+                </div>
+            </div>
+            
+            <!-- Category 2: Browse Equipments -->
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card h-100 dashboard-card p-4 text-center position-relative border-info border-opacity-25" style="background-color: #f0f8ff;" onclick="document.getElementById('equipmentGrid').scrollIntoView({behavior: 'smooth'})">
+                    <div class="card-icon text-info"><i class="fas fa-search"></i></div>
+                    <h5 class="fw-bold text-info mb-2">2. Browse Equipments</h5>
+                    <p class="text-muted small mb-0">View all tools & machinery added by nearby farmers.</p>
+                </div>
+            </div>
+            
+            <!-- Category 3: Filter by Village -->
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card h-100 dashboard-card p-4 text-center position-relative border-primary border-opacity-25" style="background-color: #f5f5ff;" onclick="document.getElementById('villageFilter').focus(); document.getElementById('villageFilter').scrollIntoView({behavior: 'smooth', block: 'center'})">
+                    <div class="card-icon text-primary"><i class="fas fa-map-marker-alt"></i></div>
+                    <h5 class="fw-bold text-primary mb-2">3. Filter by Village</h5>
+                    <p class="text-muted small mb-0">Search through districts of AP and Telangana.</p>
+                </div>
+            </div>
+
+            <!-- Category 4: Availability Calendar -->
+            <div class="col-md-6 col-sm-6 mb-4">
+                <div class="card h-100 dashboard-card p-4 text-center position-relative border-secondary border-opacity-50" style="background-color: #f8f9fa;" data-bs-toggle="modal" data-bs-target="#calendarModal">
+                    <div class="card-icon text-secondary"><i class="fas fa-calendar-alt"></i></div>
+                    <h5 class="fw-bold text-secondary mb-2">4. Availability Calendar</h5>
+                    <p class="text-muted small mb-0">This shows the availability of the equipment in the calendar.</p>
+                </div>
+            </div>
+
+            <!-- Category 5: Rental Requests -->
+            <div class="col-md-6 col-sm-12 mb-4">
+                <div class="card h-100 dashboard-card p-4 text-center position-relative border-warning border-opacity-50" data-bs-toggle="modal" data-bs-target="#rentalReqModal" onclick="renderRentalRequests()" style="background-color: #fffdf5;">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white d-none" id="rentalBadge">New</span>
+                    <div class="card-icon text-warning"><i class="fas fa-clipboard-list"></i></div>
+                    <h5 class="fw-bold text-dark mb-2">5. See Rental Requests Here</h5>
+                    <p class="text-muted small mb-0">Manage incoming bookings for your equipment.</p>
+                </div>
+            </div>
+
+            <!-- Browse & Filter Section -->
+            <div class="col-12 mb-4 mt-2">
+                <div class="bg-white p-3 rounded-3 shadow-sm d-flex justify-content-between align-items-center flex-wrap gap-3 border border-light transition" id="action-bar">
+                    <div class="d-flex align-items-center gap-2 flex-grow-1">
+                        <label class="fw-bold text-dark mb-0 flex-shrink-0"><i class="fas fa-search me-2"></i>Browse Equipment:</label>
+                        <select class="form-select border-success shadow-none w-auto ms-3 fw-bold bg-light" id="villageFilter" onchange="filterEquipment(this)">
+                            <option value="all">All Villages (AP & TS)</option>
+                            <optgroup label="Telangana">
+                                <option value="Warangal">Warangal</option>
+                                <option value="Karimnagar">Karimnagar</option>
+                                <option value="Khammam">Khammam</option>
+                                <option value="Nizamabad">Nizamabad</option>
+                            </optgroup>
+                            <optgroup label="Andhra Pradesh">
+                                <option value="Guntur">Guntur</option>
+                                <option value="Vijayawada Rural">Vijayawada Rural</option>
+                                <option value="Nellore">Nellore</option>
+                                <option value="Kurnool">Kurnool</option>
+                                <option value="Anantapur">Anantapur</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Equipment Grid -->
+            <div class="col-12">
+                <div class="row g-4" id="equipmentGrid">
+                    <!-- Javascript populates equipment cards here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toasts Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+        <div id="liveToast" class="toast align-items-center text-white bg-success border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-medium" id="toast-msg"><i class="fas fa-check-circle me-2"></i> Action completed!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Modals -->
+    <!-- Availability Calendar Modal -->
+    <div class="modal fade" id="calendarModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg border-top border-secondary border-4">
+                <div class="modal-header bg-dark text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-calendar-alt me-2 text-warning"></i> Equipment Availability Calendar</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light text-center">
+                    <h5 class="fw-bold text-dark mb-3">Interactive Scheduling (Coming Soon)</h5>
+                    <p class="text-muted">This calendar will visually display the availability of tractors and tools across the month.</p>
+                    <div class="border border-secondary border-opacity-25 rounded p-5 bg-white shadow-sm mt-4">
+                        <i class="fas fa-calendar-alt text-secondary opacity-25" style="font-size: 5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Equipment Listing Modal -->
+    <div class="modal fade" id="listEqModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg border-top border-success border-4">
+                <div class="modal-header bg-success text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-tractor me-2 text-warning"></i> List Equipment for Rent</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <form onsubmit="handleEquipmentListing(event)">
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-bold small">Equipment Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control font-monospace border-success" id="eqName" placeholder="e.g. Sonalika Rotavator 8FT" required>
+                        </div>
+                        <div class="row mb-3 g-3">
+                            <div class="col-6">
+                                <label class="form-label text-muted fw-bold small">Village Location</label>
+                                <select class="form-select bg-white" id="eqVillage" required>
+                                    <optgroup label="Telangana">
+                                        <option value="Warangal">Warangal</option>
+                                        <option value="Karimnagar">Karimnagar</option>
+                                        <option value="Khammam">Khammam</option>
+                                        <option value="Nizamabad">Nizamabad</option>
+                                    </optgroup>
+                                    <optgroup label="Andhra Pradesh">
+                                        <option value="Guntur">Guntur</option>
+                                        <option value="Vijayawada Rural">Vijayawada Rural</option>
+                                        <option value="Nellore">Nellore</option>
+                                        <option value="Kurnool">Kurnool</option>
+                                        <option value="Anantapur">Anantapur</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label text-muted fw-bold small">Daily Rate (₹)</label>
+                                <input type="number" class="form-control text-success fw-bold" id="eqRate" placeholder="e.g. 1500" min="100" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm mt-2">Publish Equipment Listing</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking / Calendar Modal -->
+    <div class="modal fade" id="bookModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg border-top border-warning border-4">
+                <div class="modal-header bg-dark text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-calendar-check me-2 text-warning"></i> Check Availability & Book</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-white">
+                    <div class="row g-4 border-bottom pb-4 mb-4 align-items-center">
+                        <div class="col-md-6 border-end pe-4">
+                            <h5 class="fw-bold text-success mb-1" id="bookEqName">Select Equipment</h5>
+                            <p class="text-muted small mb-3"><i class="fas fa-map-marker-alt me-1 text-danger"></i> <span id="bookEqVillage">Location</span></p>
+                            
+                            <!-- Static Mock Availability Calendar -->
+                            <div class="bg-light p-3 rounded border text-center font-monospace">
+                                <h6 class="mb-3 fw-bold text-dark"><i class="far fa-calendar-alt me-1 text-primary"></i> Availability Calendar</h6>
+                                <div style="display:grid; grid-template-columns: repeat(7, 1fr); gap: 4px; font-size: 0.8rem;">
+                                    <div class="fw-bold text-muted">M</div><div class="fw-bold text-muted">T</div><div class="fw-bold text-muted">W</div><div class="fw-bold text-muted">T</div><div class="fw-bold text-muted">F</div><div class="fw-bold text-muted text-danger">S</div><div class="fw-bold text-muted text-danger">S</div>
+                                    <div class="bg-success text-white py-1 rounded">25</div><div class="bg-success text-white py-1 rounded">26</div><div class="bg-danger text-white py-1 rounded text-decoration-line-through">27</div><div class="bg-danger text-white py-1 rounded text-decoration-line-through">28</div><div class="bg-success text-white py-1 rounded">29</div><div class="bg-warning text-dark py-1 rounded">30</div><div class="bg-warning text-dark py-1 rounded">31</div>
+                                </div>
+                                <div class="d-flex justify-content-center gap-3 mt-3 small">
+                                    <span><i class="fas fa-square text-success"></i> Free</span>
+                                    <span><i class="fas fa-square text-danger"></i> Booked</span>
+                                    <span><i class="fas fa-square text-warning"></i> Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 ps-4">
+                            <form id="bookSubmitForm" onsubmit="handleEquipmentBooking(event)">
+                                <h6 class="fw-bold text-dark mb-3 border-bottom pb-2">Request Booking</h6>
+                                <input type="hidden" id="bookEqId">
+                                <div class="row mb-3 g-2">
+                                    <div class="col-6">
+                                        <label class="form-label text-muted fw-bold small">Start Date</label>
+                                        <input type="date" class="form-control font-monospace" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label text-muted fw-bold small">Days</label>
+                                        <input type="number" class="form-control font-monospace" id="bookDays" value="1" min="1" required onchange="calculateTotal()">
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-4 bg-success bg-opacity-10 p-3 rounded border border-success border-opacity-25">
+                                    <span class="text-dark fw-bold">Total Estimate (<span id="bookRateLabel">₹0</span>/day):</span>
+                                    <span class="fs-4 text-success fw-bold" id="bookTotalEstimate">₹0</span>
+                                </div>
+                                
+                                <button type="button" class="btn btn-outline-success w-100 fw-bold shadow-sm mb-2" onclick="showToast('Success', 'Calling owner securely at +91 98XXX XXXXX...')"><i class="fas fa-phone-alt me-2"></i>Contact Owner</button>
+                                <button type="submit" class="btn btn-warning w-100 fw-bold shadow-sm" id="btn-book">Send Rental Request <i class="fas fa-paper-plane ms-1"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rental Requests Modal -->
+    <div class="modal fade" id="rentalReqModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg border-top border-warning border-4">
+                <div class="modal-header bg-dark text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-clipboard-list me-2 text-warning"></i> Incoming Rental Requests</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="table-responsive bg-white rounded shadow-sm">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-warning text-dark">
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Borrower</th>
+                                    <th>Days</th>
+                                    <th>Potential Earnings</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rentalTbody">
+                                <tr><td colspan="5" class="text-center text-muted py-4">No incoming booking requests yet.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Dashboard Modals (My Crops & Wholesaler Bids) -->
+    <div class="modal fade" id="myCropsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg border-top border-success border-4">
+                <div class="modal-header bg-success text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-wheat-awn me-2 text-warning"></i> Active Listed Crops</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="table-responsive bg-white rounded shadow-sm">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-success text-success">
+                                <tr>
+                                    <th>Crop Type</th>
+                                    <th>Quantity (KG)</th>
+                                    <th>Listed Price</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myCropsTbody">
+                                <tr><td colspan="4" class="text-center text-muted py-4">You have not listed any crops yet. Click "List for Sale" to get started.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="bidsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg border-top border-danger border-4">
+                <div class="modal-header bg-danger text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-handshake me-2 text-warning"></i> Incoming Wholesaler Bids</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="table-responsive bg-white rounded shadow-sm">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-danger text-danger">
+                                <tr>
+                                    <th>Crop Listed</th>
+                                    <th>Wholesaler ID</th>
+                                    <th>Bid Offer</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bidsTbody">
+                                <tr><td colspan="4" class="text-center text-muted py-4">No active bids yet. Wholesalers will bid once you list a crop.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crop Listing Modal -->
+    <div class="modal fade" id="listCropModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg border-top border-success border-4">
+                <div class="modal-header bg-success text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-seedling me-2 text-warning"></i> List New Crop for Sale</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="listingForm" onsubmit="handleCropListing(event)">
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-bold small">Select Crop Type</label>
+                            <select class="form-select shadow-none border-success" id="listCropType" required onchange="validateSmartPrice()">
+                                <option value="">-- Choose Crop --</option>
+                                <option value="Premium Wheat (Sharbati)">Wheat (Premium Sharbati)</option>
+                                <option value="Basmati Rice">Rice (Basmati)</option>
+                                <option value="Cotton">Cotton</option>
+                                <option value="Sugarcane">Sugarcane</option>
+                                <option value="Maize">Maize</option>
+                                <option value="Groundnut">Groundnut</option>
+                                <option value="Red Gram (Tur Dal)">Red Gram (Tur Dal)</option>
+                                <option value="Soybean">Soybean</option>
+                                <option value="Turmeric">Turmeric</option>
+                                <option value="Red Chillies">Red Chillies</option>
+                                <option value="Red Onion">Red Onion</option>
+                                <option value="Paddy">Paddy</option>
+                            </select>
+                        </div>
+                        <div class="row mb-4 g-3">
+                            <div class="col-6">
+                                <label class="form-label text-muted fw-bold small">Quantity (in KGs)</label>
+                                <input type="number" class="form-control" id="listCropQty" placeholder="e.g. 500" min="50" required>
+                            </div>
+                            <div class="col-6 position-relative">
+                                <label class="form-label text-muted fw-bold small">Expected Price (₹/KG)</label>
+                                <input type="number" class="form-control fw-bold text-success border-success" id="expectedPriceInput" placeholder="e.g. 25" min="5" required oninput="validateSmartPrice()">
+                                <!-- Smart Meter UI -->
+                                <div id="smartPriceFeedback" class="small mt-2 p-2 rounded bg-light border d-none transition">
+                                    <i class="fas fa-robot text-primary me-1"></i> <span id="smartPriceMsg" class="fw-bold text-dark">Analyzing...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="button" class="btn btn-outline-success fw-bold w-50 shadow-sm" onclick="applySuggestedPrice()">
+                                <i class="fas fa-bolt me-1"></i> Apply Optimal Price
+                            </button>
+                            <button type="submit" class="btn btn-success fw-bold w-50 shadow-sm" id="btn-publish">
+                                Publish Listing <i class="fas fa-check-circle ms-1"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Smart Pricing Modal (Clean Standalone Tool) -->
+    <div class="modal fade" id="aiModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg border-top border-success border-4">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-chart-line me-2 text-warning"></i> Dynamics Smart Pricing</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <p class="text-muted mb-4">Calculate an optimal dynamic price by specifying base price and quantity.</p>
+
+                    <div class="text-start mb-3">
+                        <label class="form-label fw-bold small text-muted">Base Price (₹/KG) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control fw-bold border-success text-success" id="standaloneBasePrice" placeholder="e.g. 25" min="1" required>
+                    </div>
+
+                    <div class="text-start mb-4">
+                        <label class="form-label fw-bold small text-muted">Quantity (KG) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control fw-bold border-success text-success" id="standaloneQty" placeholder="e.g. 500" min="1" required>
+                    </div>
+
+                    <button type="button" class="btn btn-success w-100 fw-bold shadow-sm mb-3" onclick="runStandalonePriceCheck()">
+                        <i class="fas fa-calculator me-2"></i> Calculate Smart Price
+                    </button>
+
+                    <div id="standaloneResult" class="p-4 rounded border d-none transition shadow-sm text-start bg-light mt-2">
+                        <h6 class="fw-bold mb-3 text-success border-bottom pb-2"><i class="fas fa-magic me-2"></i>Analysis Result</h6>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Original Price:</span>
+                            <span class="fw-bold fs-5 text-dark">₹<span id="resOriginalPrice">0</span></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Suggested Price:</span>
+                            <span class="fw-bold fs-4 text-success">₹<span id="resSuggestedPrice">0</span></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Total Estimated:</span>
+                            <span class="fw-bold fs-5 text-primary">₹<span id="resTotalValue">0</span></span>
+                        </div>
+                        <div class="p-2 bg-white rounded border-start border-warning border-4 small">
+                            <i class="fas fa-info-circle text-warning me-1"></i> <span id="resReason" class="text-muted" style="font-size: 0.85rem;"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <button class="btn btn-outline-secondary w-100 fw-bold" data-bs-dismiss="modal">Close Tool</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', 
+                includedLanguages: 'en,hi,te',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simulate Card Actions with Spinners
+        function simulateAction(cardEl, msg, targetModal) {
+            if(cardEl.classList.contains('loading')) return;
+            cardEl.classList.add('loading');
+            
+            setTimeout(() => {
+                cardEl.classList.remove('loading');
+                showToast('Success', msg);
+                // In reality, this would open the specific modal using targetModal
+            }, 800);
+        }
+
+        // Show Toast Notifications
+        function showToast(type, text) {
+            const toastEl = document.getElementById('liveToast');
+            const msgEl = document.getElementById('toast-msg');
+            msgEl.innerHTML = `<i class="fas fa-info-circle me-2"></i> ${text}`;
+            
+            if(type.toLowerCase() === 'error') {
+                toastEl.classList.replace('bg-success', 'bg-danger');
+            } else {
+                toastEl.classList.replace('bg-danger', 'bg-success');
+            }
+            
+            const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            toast.show();
+        }
+
+        // Dynamic Frontend State Engine
+        let currentSmartPrice = 0;
+
+        // Form Submit with Loading UI inside Modal (for equipment/bookModal)
+        function submitForm(e, modalId, successMsg) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Processing...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                const modalInstance = bootstrap.Modal.getInstance(document.getElementById(modalId));
+                if(modalInstance) modalInstance.hide();
+                
+                showToast('Success', successMsg);
+                e.target.reset();
+            }, 1500);
+        }
+
+        // STEP 1: Handle Crop Listing
+        async function handleCropListing(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Publishing...';
+            btn.disabled = true;
+            
+            const cropType = document.getElementById('listCropType').value;
+            const qty = document.getElementById('listCropQty').value;
+            const price = document.getElementById('expectedPriceInput').value;
+            
+            try {
+                const res = await fetch('/api/crops', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: cropType, qty: qty, price: price })
+                });
+                if(res.ok) {
+                    await fetchMyCrops();
+                    showToast('Success', 'Crop successfully listed! Wholesalers can now bid.');
+                }
+            } catch(error) {
+                console.error('Error posting crop:', error);
+                showToast('Error', 'Failed to list crop');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                e.target.reset();
+                const modalInstance = bootstrap.Modal.getInstance(document.getElementById('listCropModal'));
+                if(modalInstance) modalInstance.hide();
+            }
+        }
+
+        // Render functions for the new modals calling backend
+        async function fetchMyCrops() {
+            try {
+                const res = await fetch('/api/crops');
+                const data = await res.json();
+                const tbody = document.getElementById('myCropsTbody');
+                if(!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">You have not listed any crops yet. Click "List for Sale" to get started.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = '';
+                data.forEach(c => {
+                    tbody.innerHTML += `<tr><td class="fw-bold">${c.type}</td><td>${c.quantity_kg} KG</td><td class="text-success fw-bold">₹${c.price_per_kg}/KG</td><td><span class="badge bg-success">${c.status || 'Active'}</span></td></tr>`;
+                });
+            } catch(e) { console.error('Error fetching crops:', e); }
+        }
+
+        async function renderBids() {
+            const badge = document.getElementById('bidsBadge');
+            if(badge) badge.classList.add('d-none'); // Clear notifications
+
+            try {
+                const res = await fetch('/api/bids');
+                const data = await res.json();
+                const tbody = document.getElementById('bidsTbody');
+                if(!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No active bids yet. Wholesalers will bid once you list a crop.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = '';
+                data.forEach(b => {
+                    const cropName = b.Crop ? b.Crop.type : 'Unknown Crop';
+                    const wholesalerName = b.User ? b.User.name : 'Verified Buyer';
+                    tbody.innerHTML += `<tr><td class="fw-bold">${cropName}</td><td>${wholesalerName} <i class="fas fa-check-circle text-success ms-1" title="Verified"></i></td><td class="text-danger fw-bold fs-5">₹${b.bid_amount}/KG</td><td><button class="btn btn-sm btn-success shadow-sm me-1" onclick="showToast('Success', 'Bid accepted securely.')">Accept</button><button class="btn btn-sm btn-outline-danger shadow-sm" onclick="showToast('Success', 'Bid rejected.')">Reject</button></td></tr>`;
+                });
+            } catch(e) { console.error('Error fetching bids:', e); }
+        }
+
+        // STEP 3: Smart Price Generation Engine
+        let activeSuggestedPrice = 20;
+
+        // Validates price within the Crop Listing Form
+        function validateSmartPrice() {
+            const cropType = document.getElementById('listCropType').value;
+            const expectedStr = document.getElementById('expectedPriceInput').value;
+            const feedbackBox = document.getElementById('smartPriceFeedback');
+            const msgEl = document.getElementById('smartPriceMsg');
+            
+            if(!cropType || expectedStr === "") {
+                feedbackBox.classList.add('d-none');
+                return;
+            }
+            
+            feedbackBox.classList.remove('d-none');
+            const expected = parseFloat(expectedStr);
+            
+            // Calculate a pseudo-deterministic mock price for demo consistency
+            let baseMarket = 15 + (cropType.length % 10);
+            let demandFactor = (cropType.length % 3) + 2;
+            let supplyFactor = (cropType.length % 2); 
+            activeSuggestedPrice = baseMarket + demandFactor - supplyFactor;
+            
+            if (expected > activeSuggestedPrice + 3) {
+                feedbackBox.className = "small mt-2 p-2 rounded bg-opacity-10 bg-danger border border-danger transition";
+                msgEl.innerHTML = `<span class="text-danger">Too High!</span> Buyers are offering around ₹${activeSuggestedPrice}/KG based on current moderate supply. You may not get sales.`;
+            } else if (expected < activeSuggestedPrice - 3) {
+                feedbackBox.className = "small mt-2 p-2 rounded bg-opacity-10 bg-warning border border-warning transition";
+                msgEl.innerHTML = `<span class="text-warning text-dark">Below Market!</span> You are losing profit. The fair market value is around ₹${activeSuggestedPrice}/KG.`;
+            } else {
+                feedbackBox.className = "small mt-2 p-2 rounded bg-opacity-10 bg-success border border-success transition";
+                msgEl.innerHTML = `<span class="text-success">Optimal Pricing!</span> You are priced competitively with High Demand.`;
+            }
+        }
+
+        function applySuggestedPrice() {
+            const cropType = document.getElementById('listCropType').value;
+            if(!cropType) {
+                showToast('Warning', 'Please select a crop type first to calculate the market rate.', 'error');
+                return;
+            }
+            document.getElementById('expectedPriceInput').value = activeSuggestedPrice;
+            validateSmartPrice();
+            showToast('Success', `Optimal Smart Price of ₹${activeSuggestedPrice}/KG applied!`);
+        }
+
+        function generateSmartPrice(fromDashboard) {
+            document.getElementById('standaloneResult').classList.add('d-none');
+            document.getElementById('standaloneBasePrice').value = '';
+            document.getElementById('standaloneQty').value = '';
+            
+            if(fromDashboard === false) {
+                const listModal = bootstrap.Modal.getInstance(document.getElementById('listCropModal'));
+                if(listModal) listModal.hide();
+            }
+            const aiMod = new bootstrap.Modal(document.getElementById('aiModal'));
+            aiMod.show();
+        }
+
+        function runStandalonePriceCheck() {
+            const basePrice = parseFloat(document.getElementById('standaloneBasePrice').value);
+            const qty = parseFloat(document.getElementById('standaloneQty').value);
+            const resultBox = document.getElementById('standaloneResult');
+            const resOrigPrice = document.getElementById('resOriginalPrice');
+            const resSuggPrice = document.getElementById('resSuggestedPrice');
+            const resTotalVal = document.getElementById('resTotalValue');
+            const resReason = document.getElementById('resReason');
+            
+            if (isNaN(basePrice) || basePrice <= 0 || isNaN(qty) || qty <= 0) {
+                showToast('Warning', 'Please enter valid numbers for both Base Price and Quantity.', 'error');
+                return;
+            }
+            
+            let suggestedPrice = basePrice;
+            let reasonParts = [];
+            
+            // Quantity rule
+            if (qty > 1000) {
+                suggestedPrice -= (basePrice * 0.05); // bulk discount
+                reasonParts.push("Reduced price slightly for bulk volume (>1000 kg)");
+            } else if (qty < 200) {
+                suggestedPrice += (basePrice * 0.05); // low qty premium
+                reasonParts.push("Increased price slightly for low quantity (<200 kg)");
+            } else {
+                reasonParts.push("Standard quantity base pricing applied");
+            }
+            
+            // Demand factor rule: random between -5% to +10%
+            const demandFactor = (Math.random() * 0.15) - 0.05;
+            const demandAdj = basePrice * demandFactor;
+            suggestedPrice += demandAdj;
+            
+            let demandStr = demandFactor > 0 ? `+${(demandFactor*100).toFixed(1)}%` : `${(demandFactor*100).toFixed(1)}%`;
+            reasonParts.push(`market demand factor applied (${demandStr})`);
+            
+            suggestedPrice = Math.max(0.1, suggestedPrice);
+            
+            // Format output strings
+            resOrigPrice.innerText = basePrice.toFixed(2);
+            resSuggPrice.innerText = suggestedPrice.toFixed(2);
+            resTotalVal.innerText = (suggestedPrice * qty).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            resReason.innerText = "Adjusted based on demand and quantity: " + reasonParts.join(", ") + ".";
+            
+            resultBox.classList.remove('d-none');
+            showToast('Success', 'Dynamic pricing computed successfully!');
+        }
+
+        // --- EQUIPMENT HUB DYNAMIC LOGIC ---
+        let equipmentList = [];
+        let rentalRequestsList = [];
+        let currentBookingRate = 0;
+
+        async function renderEquipment(filterParam = 'all') {
+            const grid = document.getElementById('equipmentGrid');
+            grid.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-success"></div></div>';
+            
+            try {
+                const url = filterParam === 'all' ? '/api/equipment' : `/api/equipment?village=${filterParam}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                equipmentList = data; // store globally for the booking calendar logic to find by ID
+                
+                if(data.length === 0) {
+                    grid.innerHTML = '<div class="col-12 text-center text-muted py-5 border rounded bg-light"><i class="fas fa-tractor fa-2x mb-3 text-secondary"></i><br>No equipment listed in this area.</div>';
+                    return;
+                }
+
+                grid.innerHTML = '';
+                data.forEach(eq => {
+                    const imgTag = eq.image ? `<img src="${eq.image}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="Tractor">` : `<div class="bg-success bg-opacity-10 d-flex justify-content-center align-items-center py-4 text-success"><i class="fas fa-tractor fa-3x"></i></div>`;
+                    grid.innerHTML += `
+                    <div class="col-md-4 col-sm-6 eq-card">
+                        <div class="card h-100 shadow-sm border-0 border-bottom border-success border-3 transition" style="border-radius: 12px; overflow: hidden;">
+                            ${imgTag}
+                            <div class="card-body p-4 text-center">
+                                <h5 class="fw-bold text-dark mb-1">${eq.name}</h5>
+                                <p class="small text-muted mb-3"><i class="fas fa-map-marker-alt text-danger me-1"></i> ${eq.village}</p>
+                                <h4 class="text-success fw-bold mb-4">₹${eq.rate_per_day} <span class="fs-6 text-muted fw-normal">/ day</span></h4>
+                                <button class="btn btn-outline-success w-100 fw-bold border-2 rounded-pill shadow-sm" onclick="openBookingCalendar(${eq.id})">
+                                    <i class="far fa-calendar-alt me-1"></i> Availability Calendar
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+            } catch (err) {
+                console.error("Error fetching equipment:", err);
+                grid.innerHTML = '<div class="col-12 text-center text-danger py-5">Error loading equipment.</div>';
+            }
+        }
+
+        function filterEquipment(selectEl) {
+            renderEquipment(selectEl.value);
+        }
+
+        async function handleEquipmentListing(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Publishing...';
+            btn.disabled = true;
+
+            const name = document.getElementById('eqName').value;
+            const village = document.getElementById('eqVillage').value;
+            const rate = document.getElementById('eqRate').value;
+
+            try {
+                const res = await fetch('/api/equipment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, village, rate: parseFloat(rate) })
+                });
+                
+                if(res.ok) {
+                    document.getElementById('villageFilter').value = 'all';
+                    await renderEquipment('all');
+                    showToast('Success', `${name} is now freely listed for rent!`);
+                }
+            } catch (err) {
+                console.error("Error creating equipment list:", err);
+                showToast('Error', 'Failed to list equipment.');
+            } finally {
+                const modalInstance = bootstrap.Modal.getInstance(document.getElementById('listEqModal'));
+                if(modalInstance) modalInstance.hide();
+                
+                btn.innerHTML = 'Publish Equipment Listing';
+                btn.disabled = false;
+                e.target.reset();
+            }
+        }
+
+        function openBookingCalendar(eqId) {
+            const eq = equipmentList.find(item => item.id === eqId);
+            if(!eq) return;
+
+            document.getElementById('bookEqId').value = eq.id;
+            document.getElementById('bookEqName').innerText = eq.name;
+            document.getElementById('bookEqVillage').innerText = eq.village;
+            currentBookingRate = eq.rate_per_day || eq.rate;
+            
+            document.getElementById('bookRateLabel').innerText = '₹' + currentBookingRate;
+            document.getElementById('bookDays').value = 1;
+            calculateTotal();
+
+            const bMod = new bootstrap.Modal(document.getElementById('bookModal'));
+            bMod.show();
+        }
+
+        function calculateTotal() {
+            const days = parseInt(document.getElementById('bookDays').value) || 1;
+            document.getElementById('bookTotalEstimate').innerText = '₹' + (currentBookingRate * days).toLocaleString();
+        }
+
+        function handleEquipmentBooking(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Sending Request...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const eqId = parseInt(document.getElementById('bookEqId').value);
+                const reqDays = parseInt(document.getElementById('bookDays').value);
+                const eq = equipmentList.find(item => item.id === eqId);
+                
+                rentalRequestsList.push({ eqName: eq.name, days: reqDays, total: (eq.rate * reqDays), borrower: 'F-' + Math.floor(Math.random() * 9000 + 1000) });
+                
+                // Show notification badge
+                document.getElementById('rentalBadge').classList.remove('d-none');
+                
+                const bMod = bootstrap.Modal.getInstance(document.getElementById('bookModal'));
+                if(bMod) bMod.hide();
+                
+                showToast('Success', `Rental request for ${reqDays} days officially sent to owner!`);
+                btn.innerHTML = 'Send Rental Request <i class="fas fa-paper-plane ms-1"></i>';
+                btn.disabled = false;
+                e.target.reset();
+            }, 1200);
+        }
+
+        function renderRentalRequests() {
+            document.getElementById('rentalBadge').classList.add('d-none');
+            const tbody = document.getElementById('rentalTbody');
+            
+            if(rentalRequestsList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No incoming booking requests yet.</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            rentalRequestsList.forEach((req) => {
+                tbody.innerHTML += `
+                <tr>
+                    <td class="fw-bold">${req.eqName}</td>
+                    <td><span class="badge bg-secondary">${req.borrower}</span></td>
+                    <td class="fw-bold">${req.days} Day(s)</td>
+                    <td class="text-success fw-bold">₹${req.total.toLocaleString()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-success px-3 me-1" onclick="showToast('Success', 'Booking Approved!')"><i class="fas fa-check"></i></button>
+                    </td>
+                </tr>`;
+            });
+        }
+
+        // Initialize App components
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchMyCrops();
+            renderEquipment('all');
+        });
+    </script>
+</body>
+</html>

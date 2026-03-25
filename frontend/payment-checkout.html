@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout | KisaanConnect</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .navbar-brand { font-weight: 700; letter-spacing: 0.5px; }
+
+        /* Stepper Flow */
+        .stepper-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            margin-bottom: 3rem;
+        }
+        .stepper-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            width: 90%;
+            height: 4px;
+            background-color: #e9ecef;
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+        .step-item {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        .step-circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 0 auto 0.5rem;
+            border: 4px solid #fff;
+            transition: all 0.3s;
+        }
+        .step-item.active .step-circle {
+            background-color: #198754;
+            color: #fff;
+            box-shadow: 0 0 0 5px rgba(25, 135, 84, 0.2);
+        }
+        .step-item.completed .step-circle {
+            background-color: #198754;
+            color: #fff;
+        }
+        .step-label {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .step-item.active .step-label { color: #198754; }
+
+        /* Payment Cards */
+        .payment-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .payment-card:hover {
+            border-color: #198754;
+            box-shadow: 0 4px 15px rgba(25,135,84,0.1);
+            background-color: #f8fff9;
+        }
+        .payment-card.selected {
+            border-color: #198754;
+            background-color: #e8f5e9;
+        }
+        .payment-card.selected::after {
+            content: '\f058';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #198754;
+            font-size: 1.5rem;
+        }
+        .pay-icon {
+            font-size: 2.5rem;
+            color: #198754;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Order Summary */
+        .summary-card {
+            background: #fff;
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <nav class="navbar navbar-dark bg-success shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="fas fa-lock me-2 text-warning"></i> Secure Checkout - KisaanConnect
+            </a>
+            <div id="google_translate_element"></div>
+        </div>
+    </nav>
+
+    <div class="container my-5" style="max-width: 900px;">
+        
+        <!-- Step-by-Step Visualization -->
+        <div class="card summary-card p-4 mb-4">
+            <div class="stepper-container px-4">
+                <div class="step-item active" id="step-1-ui">
+                    <div class="step-circle"><i class="fas fa-wallet"></i></div>
+                    <div class="step-label">Select Payment</div>
+                </div>
+                <div class="step-item" id="step-2-ui">
+                    <div class="step-circle"><i class="fas fa-spinner"></i></div>
+                    <div class="step-label">Process</div>
+                </div>
+                <div class="step-item" id="step-3-ui">
+                    <div class="step-circle"><i class="fas fa-check"></i></div>
+                    <div class="step-label">Status</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            
+            <!-- Left Column: Checkout Logic -->
+            <div class="col-md-8">
+                <div class="card summary-card h-100">
+                    <div class="card-body p-4" id="main-content-area">
+                        
+                        <!-- ================= STEP 1: SELECT PAYMENT ================= -->
+                        <div id="section-select">
+                            <h4 class="fw-bold mb-4">Choose Payment Method</h4>
+                            
+                            <div class="row g-3">
+                                <!-- Online UPI -->
+                                <div class="col-sm-6">
+                                    <div class="payment-card h-100 p-4 text-center" id="card-upi" onclick="selectPayment('upi')">
+                                        <i class="fas fa-qrcode pay-icon text-primary"></i>
+                                        <h5 class="fw-bold text-dark">Online (UPI / QR)</h5>
+                                        <p class="text-muted small mb-0">Pay instantly using GPay, PhonePe, or Paytm.</p>
+                                    </div>
+                                </div>
+                                <!-- Offline COD -->
+                                <div class="col-sm-6">
+                                    <div class="payment-card h-100 p-4 text-center" id="card-cod" onclick="selectPayment('cod')">
+                                        <i class="fas fa-money-bill-wave pay-icon text-success"></i>
+                                        <h5 class="fw-bold text-dark">Offline (Cash / Cheque)</h5>
+                                        <p class="text-muted small mb-0">Pay directly to the farmer upon full delivery.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-top text-end">
+                                <button class="btn btn-success px-4 py-2 fw-bold" id="btn-proceed" disabled onclick="goToProcess()">Proceed to Pay</button>
+                            </div>
+                        </div>
+
+                        <!-- ================= STEP 2: PROCESS ================= -->
+                        <div id="section-process" class="text-center py-5 d-none">
+                            <h4 class="fw-bold mb-3">Processing Transaction</h4>
+                            <p class="text-muted mb-4">Please do not refresh the page or hit the back button.</p>
+                            
+                            <div class="spinner-border text-success" style="width: 3rem; height: 3rem;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            
+                            <p class="mt-4 fw-medium text-success" id="process-text">Waiting for bank confirmation...</p>
+                        </div>
+
+                        <!-- =================  STEP 3: STATUS (SUCCESS / PENDING) ================= -->
+                        <div id="section-status" class="py-4 d-none text-center">
+                            
+                            <!-- Success State (For Online UPI/QR) -->
+                            <div id="status-success" class="d-none">
+                                <div class="mb-4">
+                                    <div class="d-inline-flex justify-content-center align-items-center bg-success bg-opacity-10 rounded-circle" style="width: 100px; height: 100px;">
+                                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                                    </div>
+                                </div>
+                                <h3 class="fw-bold text-success mb-2">Payment Successful!</h3>
+                                <p class="text-muted mb-4">Your order has been placed. Transaction ID: <strong>#TXN-8849201</strong></p>
+                                
+                                <div class="bg-light p-3 rounded-3 text-start d-inline-block mx-auto mb-4 border" style="min-width: 300px;">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Amount Paid:</span>
+                                        <span class="fw-bold">₹12,450.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">Paid to:</span>
+                                        <span class="fw-bold">Ramesh Kumar</span>
+                                    </div>
+                                </div><br>
+                                
+                                <button class="btn btn-outline-success px-4" onclick="window.location.href='wholesaler-dashboard.html'">Return to Dashboard</button>
+                            </div>
+
+                            <!-- Warning State (For Offline COD) -->
+                            <div id="status-pending" class="d-none">
+                                <div class="mb-4">
+                                    <div class="d-inline-flex justify-content-center align-items-center bg-warning bg-opacity-10 rounded-circle" style="width: 100px; height: 100px;">
+                                        <i class="fas fa-clock text-warning" style="font-size: 3.5rem;"></i>
+                                    </div>
+                                </div>
+                                <h3 class="fw-bold text-dark mb-2">Order Pending Payment <span class="badge bg-warning text-dark align-middle ms-2">Pending</span></h3>
+                                <p class="text-muted mb-4">Your order has been reserved successfully! Please pay cash directly to the farmer upon delivery.</p>
+                                
+                                <div class="bg-warning bg-opacity-10 p-3 rounded-3 text-start d-inline-block mx-auto mb-4 border border-warning">
+                                    <div class="d-flex align-items-center text-dark fw-medium">
+                                        <i class="fas fa-info-circle text-warning me-2 fs-5"></i>
+                                        Amount to be paid on delivery: ₹12,450.00
+                                    </div>
+                                </div><br>
+
+                                <button class="btn btn-warning px-4 fw-bold shadow-sm" onclick="window.location.href='my-orders.html'">View My Orders</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Order Summary -->
+            <div class="col-md-4">
+                <div class="card summary-card p-4 sticky-top" style="top: 2rem;">
+                    <h5 class="fw-bold mb-4 border-bottom pb-2">Order Summary</h5>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=50" class="rounded" width="40" height="40" style="object-fit: cover;">
+                            <div>
+                                <h6 class="mb-0 fw-bold fs-6">Premium Wheat</h6>
+                                <small class="text-muted">Qty: 5 Qtl</small>
+                            </div>
+                        </div>
+                        <span class="fw-medium">₹10,500</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2 text-muted small border-top pt-3">
+                        <span>Subtotal</span>
+                        <span>₹10,500</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 text-muted small">
+                        <span>Platform Fee (2%)</span>
+                        <span>₹210</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 text-muted small">
+                        <span>Estimated Transport</span>
+                        <span>₹1,740</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between fw-bold fs-5 text-success border-top pt-3 mt-2">
+                        <span>Total Pay</span>
+                        <span>₹12,450</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script for Step-by-Step Logic -->
+    <script>
+        let selectedMethod = null;
+
+        function selectPayment(method) {
+            selectedMethod = method;
+            
+            // Remove selection CSS
+            document.getElementById('card-upi').classList.remove('selected');
+            document.getElementById('card-cod').classList.remove('selected');
+            
+            // Add Selection CSS
+            document.getElementById('card-' + method).classList.add('selected');
+            
+            // Enable Button
+            document.getElementById('btn-proceed').disabled = false;
+        }
+
+        function goToProcess() {
+            // UI Stepper update
+            document.getElementById('step-1-ui').classList.add('completed');
+            document.getElementById('step-1-ui').classList.remove('active');
+            document.getElementById('step-2-ui').classList.add('active');
+            
+            // Hide section 1, show section 2
+            document.getElementById('section-select').classList.add('d-none');
+            document.getElementById('section-process').classList.remove('d-none');
+            
+            // Set mock text
+            const pt = document.getElementById('process-text');
+            pt.innerText = selectedMethod === 'upi' ? "Connecting to UPI gateway..." : "Confirming cash receipt arrangement...";
+
+            // Mock timeout process
+            setTimeout(() => {
+                goToStatus();
+            }, 2500);
+        }
+
+        function goToStatus() {
+            // UI Stepper update
+            document.getElementById('step-2-ui').classList.add('completed');
+            document.getElementById('step-2-ui').classList.remove('active');
+            document.getElementById('step-3-ui').classList.add('active');
+            document.getElementById('step-3-ui').classList.add('completed');
+            
+            // Hide section 2, show section 3
+            document.getElementById('section-process').classList.add('d-none');
+            document.getElementById('section-status').classList.remove('d-none');
+
+            // Show appropriate outcome container
+            if(selectedMethod === 'upi') {
+                document.getElementById('status-success').classList.remove('d-none');
+            } else {
+                // COD is pending receipt
+                document.getElementById('status-pending').classList.remove('d-none');
+            }
+        }
+    </script>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', 
+                includedLanguages: 'en,hi,te',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

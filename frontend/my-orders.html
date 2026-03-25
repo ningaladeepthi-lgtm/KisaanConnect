@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Wholesaler Portal | KisanConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="logo-icon">🌿</span>
+                <h2>KisanConnect</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="wholesaler-dashboard.html" class="nav-item" style="text-decoration: none; display: flex; align-items: center; width: 100%; text-align: left; background: none; border: none; font-size: inherit; font-family: inherit; color: var(--text-main); cursor: pointer; padding: 1rem 1.5rem; transition: background 0.2s;">
+                    <span class="nav-icon">📦</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="my-orders.html" class="nav-item active" style="text-decoration: none; display: flex; align-items: center; width: 100%; text-align: left; background: var(--primary-light); color: var(--primary-dark); font-weight: 600; border: none; font-size: inherit; font-family: inherit; cursor: pointer; padding: 1rem 1.5rem; border-right: 4px solid var(--primary);">
+                    <span class="nav-icon">🛒</span>
+                    <span>My Orders</span>
+                </a>
+                <a href="return-request.html" class="nav-item" style="text-decoration: none; display: flex; align-items: center; width: 100%; text-align: left; background: none; border: none; font-size: inherit; font-family: inherit; color: var(--text-main); cursor: pointer; padding: 1rem 1.5rem; transition: background 0.2s;">
+                    <span class="nav-icon">↩️</span>
+                    <span>Return Request</span>
+                </a>
+                <a href="return-status.html" class="nav-item" style="text-decoration: none; display: flex; align-items: center; width: 100%; text-align: left; background: none; border: none; font-size: inherit; font-family: inherit; color: var(--text-main); cursor: pointer; padding: 1rem 1.5rem; transition: background 0.2s;">
+                    <span class="nav-icon">📋</span>
+                    <span>Return Status</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="user-avatar-initial" style="background:#F59E0B">A</div>
+                    <div class="user-info">
+                        <h4 id="user-display-name">AgriCorp India</h4>
+                        <p>Wholesaler • <span id="user-display-location">Mumbai</span></p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h1>My Orders</h1>
+                    <p>Track your recent purchases and active shipments.</p>
+                </div>
+                <div class="header-actions" style="display: flex; gap: 1.5rem; align-items: center;">
+                    <button class="btn btn-outline" onclick="alert('Notification sent!')">🔔 Price Alerts</button>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="view-section active">
+                    <div class="search-filter-bar mb-4" style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+                        <div style="display: flex; gap: 1rem; align-items: flex-end;">
+                            <div style="flex: 1;">
+                                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.5rem;">Search Order ID</label>
+                                <input type="text" placeholder="e.g. #ORD-8942" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="display: block; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.5rem;">Filter Status</label>
+                                <select style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px;">
+                                    <option value="all">All Orders</option>
+                                    <option value="shipped">Shipped</option>
+                                    <option value="delivered">Delivered</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" style="height: 42px; padding: 0 2rem;">Search</button>
+                        </div>
+                    </div>
+
+                    <div style="background: white; border-radius: 12px; border: 1px solid var(--border); overflow: hidden;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead style="background: #F9FAFB; border-bottom: 1px solid var(--border);">
+                                <tr>
+                                    <th style="padding: 1rem; text-align: left; font-size: 0.85rem; color: var(--text-muted);">Order ID</th>
+                                    <th style="padding: 1rem; text-align: left; font-size: 0.85rem; color: var(--text-muted);">Farmer</th>
+                                    <th style="padding: 1rem; text-align: left; font-size: 0.85rem; color: var(--text-muted);">Items</th>
+                                    <th style="padding: 1rem; text-align: left; font-size: 0.85rem; color: var(--text-muted);">Amount</th>
+                                    <th style="padding: 1rem; text-align: left; font-size: 0.85rem; color: var(--text-muted);">Status</th>
+                                    <th style="padding: 1rem; text-align: right; font-size: 0.85rem; color: var(--text-muted);">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid var(--border);">
+                                    <td style="padding: 1rem; font-weight: 500;">#ORD-8942</td>
+                                    <td style="padding: 1rem;">Ramesh Kumar</td>
+                                    <td style="padding: 1rem;">Organic Wheat (50 Qtl)</td>
+                                    <td style="padding: 1rem; font-weight: 600;">₹1,07,500</td>
+                                    <td style="padding: 1rem;"><span style="background: #D1FAE5; color: #065F46; padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 500;">Delivered</span></td>
+                                    <td style="padding: 1rem; text-align: right;">
+                                        <a href="return-request.html?order=ORD-8942" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Return Item</a>
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--border);">
+                                    <td style="padding: 1rem; font-weight: 500;">#ORD-8910</td>
+                                    <td style="padding: 1rem;">Santosh Patil</td>
+                                    <td style="padding: 1rem;">Standard Onion (120 Qtl)</td>
+                                    <td style="padding: 1rem; font-weight: 600;">₹2,16,000</td>
+                                    <td style="padding: 1rem;"><span style="background: #DBEAFE; color: #1E40AF; padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 500;">Shipped</span></td>
+                                    <td style="padding: 1rem; text-align: right;">
+                                        <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Track Order</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

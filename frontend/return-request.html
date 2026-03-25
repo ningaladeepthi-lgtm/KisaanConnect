@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Request - Wholesaler Portal | KisanConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main); }
+        .form-control { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="logo-icon">🌿</span>
+                <h2>KisanConnect</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="wholesaler-dashboard.html" class="nav-item" style="text-decoration: none; display: flex; align-items: center; width: 100%; text-align: left; background: none; border: none; font-size: inherit; font-family: inherit; color: var(--text-main); cursor: pointer; padding: 1rem 1.5rem; transition: background 0.2s;">
+                    <span class="nav-icon">📦</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="my-orders.html" class="nav-item" style="text-decoration: none; display: flex; align-items: center; width: 100%; text-align: left; background: none; border: none; font-size: inherit; font-family: inherit; color: var(--text-main); cursor: pointer; padding: 1rem 1.5rem; transition: background 0.2s;">
+                    <span class="nav-icon">🛒</span>
+                    <span>My Orders</span>
+                </a>
+                <a href="return-request.html" class="nav-item active" style="text-decoration: none; display: flex; align-items: center; width: 100%; text-align: left; background: var(--primary-light); color: var(--primary-dark); font-weight: 600; border: none; font-size: inherit; font-family: inherit; cursor: pointer; padding: 1rem 1.5rem; border-right: 4px solid var(--primary);">
+                    <span class="nav-icon">↩️</span>
+                    <span>Return Request</span>
+                </a>
+                <a href="return-status.html" class="nav-item" style="text-decoration: none; display: flex; align-items: center; width: 100%; text-align: left; background: none; border: none; font-size: inherit; font-family: inherit; color: var(--text-main); cursor: pointer; padding: 1rem 1.5rem; transition: background 0.2s;">
+                    <span class="nav-icon">📋</span>
+                    <span>Return Status</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="user-avatar-initial" style="background:#F59E0B">A</div>
+                    <div class="user-info">
+                        <h4 id="user-display-name">AgriCorp India</h4>
+                        <p>Wholesaler • <span id="user-display-location">Mumbai</span></p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h1>Initiate Return</h1>
+                    <p>Request a return for damaged or incorrect crop deliveries.</p>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="view-section active" style="max-width: 800px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; border: 1px solid var(--border);">
+                    <form onsubmit="event.preventDefault(); window.location.href='return-status.html';">
+                        <div class="form-group">
+                            <label class="form-label">Select Order to Return</label>
+                            <select class="form-control" required>
+                                <option value="">-- Select Order --</option>
+                                <option value="ORD-8942">#ORD-8942 - Organic Wheat (Delivered on 12 Mar 2026)</option>
+                                <option value="ORD-8905">#ORD-8905 - Fresh Tomatoes (Delivered on 10 Mar 2026)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Reason for Return</label>
+                            <select class="form-control" required>
+                                <option value="">-- Select Reason --</option>
+                                <option value="damaged">Quality Degradation / Damaged in transit</option>
+                                <option value="wrong_item">Wrong Item Received</option>
+                                <option value="quantity">Quantity Mismatch</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Detailed Explanation</label>
+                            <textarea class="form-control" rows="4" placeholder="Please describe the issue with the shipment..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Upload Evidence (Images/Video)</label>
+                            <div style="border: 2px dashed var(--border); padding: 2rem; text-align: center; border-radius: 8px; background: #F9FAFB;">
+                                <span style="font-size: 2rem; display: block; margin-bottom: 1rem;">📸</span>
+                                <p style="margin-bottom: 1rem; color: var(--text-muted);">Drag and drop files here, or click to browse</p>
+                                <input type="file" multiple accept="image/*" style="display: block; margin: 0 auto;">
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                            <button type="button" class="btn btn-outline" onclick="window.history.back()">Cancel</button>
+                            <button type="submit" class="btn btn-primary" style="padding: 0 2rem;" onclick="alert('Return request submitted successfully!')">Submit Return Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KisaanConnect | Farmer First Platform</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; overflow-x: hidden; }
+        
+        /* Navbar */
+        .navbar {
+            transition: background-color 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .navbar-brand { font-weight: 800; letter-spacing: 0.5px; font-size: 1.5rem; }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            background: linear-gradient(135deg, rgba(20,108,67,0.9) 0%, rgba(32,201,151,0.85) 100%), 
+                        url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            padding: 8rem 0 6rem;
+            text-align: center;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+            box-shadow: 0 10px 30px rgba(25,135,84,0.3);
+        }
+        .hero h1 { font-weight: 800; font-size: 3.5rem; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .hero p.tagline { font-size: 1.5rem; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 2rem; opacity: 0.9; }
+
+        .btn-custom { padding: 0.75rem 2rem; border-radius: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; }
+        .btn-custom:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .btn-primary-custom { background-color: #ffc107; border: none; color: #212529; }
+        .btn-primary-custom:hover { background-color: #e0a800; color: #212529; }
+        .btn-outline-custom { border: 2px solid white; color: white; background: transparent; }
+        .btn-outline-custom:hover { background-color: white; color: #198754; }
+
+        /* Feature Cards */
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            border: none;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+            margin-top: -50px; /* Overlaps hero */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            height: 100%;
+        }
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(25,135,84,0.15);
+        }
+        .feature-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background: #e8f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: #198754;
+            font-size: 2.5rem;
+            transition: all 0.4s ease;
+        }
+        .feature-card:hover .feature-icon-wrapper { background: #198754; color: white; }
+
+        /* Section Titles */
+        .section-title { font-weight: 800; color: #212529; margin-bottom: 3rem; text-align: center; position: relative; }
+        .section-title::after {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background-color: #198754;
+            display: block;
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* How It Works Steps */
+        .step-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            position: relative;
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        .step-card:hover { transform: translateY(-5px); border-color: #198754; }
+        .step-number {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 50px;
+            height: 50px;
+            background: #ffc107;
+            color: #212529;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(255,193,7,0.4);
+            border: 4px solid white;
+        }
+
+        /* Flowchart Image Block */
+        .flowchart-img {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s ease;
+        }
+        .flowchart-img:hover {
+            transform: scale(1.02);
+        }
+
+        /* Footer */
+        .footer { background: #212529; color: #adb5bd; padding: 4rem 0 2rem; }
+        .footer a { color: #adb5bd; text-decoration: none; transition: color 0.3s; }
+        .footer a:hover { color: #198754; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav" style="background-color: rgba(25, 135, 84, 0.95);">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-leaf text-warning me-2"></i>KisaanConnect</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 fw-medium">
+                    <li class="nav-item"><a class="nav-link active px-3" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#how-it-works">How It Works</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#ecosystem">Ecosystem</a></li>
+                </ul>
+                <div class="d-flex gap-2 align-items-center">
+                    <div id="google_translate_element" class="me-3"></div>
+                    <a href="#loginModal" data-bs-toggle="modal" class="btn btn-outline-light rounded-pill px-4 fw-bold">Login</a>
+                    <a href="#signupModal" data-bs-toggle="modal" class="btn btn-warning rounded-pill px-4 fw-bold text-dark shadow-sm">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container position-relative z-index-2">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <h1 class="mb-3">KisaanConnect <br><span class="text-warning">Farmer First Platform</span></h1>
+                    <p class="tagline">Rent • Sell • Grow</p>
+                    <p class="lead mb-5 px-md-5 fw-light" style="font-size: 1.25rem;">The ultimate integrated ecosystem directly connecting farmers locally to share equipment, and nationally to verified wholesale buyers. Cut out the middlemen, boost your margins, and grow organically.</p>
+                    
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="#signupModal" data-bs-toggle="modal" class="btn btn-custom btn-primary-custom shadow"><i class="fas fa-rocket me-2"></i> Join the Revolution</a>
+                        <a href="farmer-dashboard.html" class="btn btn-custom btn-outline-custom"><i class="fas fa-desktop me-2"></i> View Live Demo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Cards Section -->
+    <section id="features" class="container position-relative" style="z-index: 10;">
+        <div class="row g-4 justify-content-center">
+            
+            <!-- Farmer Features -->
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper"><i class="fas fa-tractor"></i></div>
+                    <h4 class="fw-bold mb-3 text-dark">Farmer Features</h4>
+                    <p class="text-muted mb-4">Empowering farmers to scale. List your upcoming harvest, receive competitive bids directly from buyers, and list your idle farm equipment for nearby renting.</p>
+                    <ul class="list-unstyled text-start text-dark fw-medium small mb-0">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Share equipment availability calendars</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Use AI Market Price tracking tools</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Receive money directly via UPI/QR</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Wholesaler Features -->
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper"><i class="fas fa-store-alt"></i></div>
+                    <h4 class="fw-bold mb-3 text-dark">Wholesaler Features</h4>
+                    <p class="text-muted mb-4">Source high-quality, verified agriculture produce directly from the source without intermediary commissions. Complete transparency in the supply chain.</p>
+                    <ul class="list-unstyled text-start text-dark fw-medium small mb-0">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Filter crops vividly by State & Village</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Real-time secure online transactions</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Advanced Return & Refund policy tracking</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Admin Control -->
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper"><i class="fas fa-shield-alt"></i></div>
+                    <h4 class="fw-bold mb-3 text-dark">Admin Control</h4>
+                    <p class="text-muted mb-4">A robust backend to guarantee a safe ecosystem. Administrators continuously monitor platform activities, verify identities, and resolve disputes swiftly.</p>
+                    <ul class="list-unstyled text-start text-dark fw-medium small mb-0">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Flag and remove suspicious listings</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Manage user account statuses heavily</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Adjudicate transport damage return claims</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-5 mt-5 bg-white">
+        <div class="container py-4">
+            <h2 class="section-title">How It Works</h2>
+            
+            <div class="row g-5 px-3 px-md-0 mt-3">
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="step-card bg-light">
+                        <div class="step-number">1</div>
+                        <h5 class="fw-bold mb-3 mt-2 text-dark">Register & Verify</h5>
+                        <p class="text-muted small m-0">Create your account as a Farmer or a Wholesaler. Provide your basic details and let our admin team instantly verify your credentials for safety.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="step-card bg-light">
+                        <div class="step-number">2</div>
+                        <h5 class="fw-bold mb-3 mt-2 text-dark">List or Browse</h5>
+                        <p class="text-muted small m-0">Farmers can use our smart terminal to list crop harvests or idle tractors. Wholesalers browse the vast nationwide map to find the best yields.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="step-card bg-light">
+                        <div class="step-number">3</div>
+                        <h5 class="fw-bold mb-3 mt-2 text-dark">Secure Agreement</h5>
+                        <p class="text-muted small m-0">Use the built-in communication tools to contact users directly or simply hit "Book Equipment" to lock in the rental schedule instantly.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="step-card bg-light">
+                        <div class="step-number">4</div>
+                        <h5 class="fw-bold mb-3 mt-2 text-dark">Transact & Grow</h5>
+                        <p class="text-muted small m-0">Complete the exchange using our secure offline COD or instant digital UPI/QR rails. Experience a seamless farm-to-door ecosystem.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- System Flowchart Image Block -->
+    <section id="ecosystem" class="py-5 bg-light">
+        <div class="container py-4 text-center">
+            <h2 class="section-title">The KisaanConnect Ecosystem Flow</h2>
+            <p class="lead text-muted mb-5 mx-auto" style="max-width: 700px;">A transparent visualization of how produce and rentals seamlessly move between the Farmer, the Wholesaler, and the System Administrator ensuring perfect harmony.</p>
+            
+            <div class="px-md-5">
+                <!-- Using a highly contextual agricultural supply chain placeholder diagram -->
+                <img src="https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&q=80&w=1200" alt="KisaanConnect System Flowchart Graphic" class="flowchart-img img-fluid">
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Banner -->
+    <section class="py-5 text-center bg-success text-white">
+        <div class="container py-4">
+            <h2 class="fw-bold mb-4">Ready to revolutionize your agricultural journey?</h2>
+            <p class="fs-5 mb-4 opacity-75">Join thousands of verified farmers and trusted buyers transacting safely across India today.</p>
+            <button class="btn btn-warning btn-lg rounded-pill px-5 fw-bold shadow-lg" data-bs-toggle="modal" data-bs-target="#signupModal">Create Free Account</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-lg-4 mb-3">
+                    <h5 class="text-white fw-bold mb-3"><i class="fas fa-leaf text-success me-2"></i>KisaanConnect</h5>
+                    <p class="small text-muted pe-4">Empowering the agricultural backbone of the country by providing direct marketplace access and optimizing resource sharing mechanisms.</p>
+                </div>
+                <div class="col-lg-2 col-6 mb-3">
+                    <h6 class="text-white fw-bold mb-3">Portals</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="farmer-dashboard.html">Farmer App</a></li>
+                        <li class="mb-2"><a href="wholesaler-dashboard.html">Wholesaler Hub</a></li>
+                        <li class="mb-2"><a href="admin/admin-dashboard.html">Admin Control</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-6 mb-3">
+                    <h6 class="text-white fw-bold mb-3">Support</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#">Help Center</a></li>
+                        <li class="mb-2"><a href="return-status.html">Track Returns</a></li>
+                        <li class="mb-2"><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 mb-3">
+                    <h6 class="text-white fw-bold mb-3">Subscribe to Newsletter</h6>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control bg-dark border-secondary text-white shadow-none" placeholder="Email address" aria-label="Email">
+                        <button class="btn btn-success" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top border-secondary mt-4 pt-4 text-center small">
+                <p class="mb-0">&copy; 2026 KisaanConnect Platform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Advanced Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow-lg border-top border-success border-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-success">Login to Portal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 pt-3">
+                    <form id="loginForm" onsubmit="handleLogin(event)">
+                        <div class="text-white small fw-bold mb-3 d-none p-2 bg-danger rounded shadow-sm" id="loginError"></div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted">Select Role <span class="text-danger">*</span></label>
+                            <select class="form-select border-success shadow-none mb-2" id="loginRole" required>
+                                <option value="farmer">Farmer</option>
+                                <option value="wholesaler">Wholesaler</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="loginName" placeholder="Enter name" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-muted">4-Digit PIN <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control text-center" style="letter-spacing: 5px;" id="loginPin" placeholder="XXXX" maxlength="4" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm mb-3" id="btnLogin">Secure Login <i class="fas fa-arrow-right ms-2"></i></button>
+                        <div class="text-center pt-3 border-top mt-2">
+                            <a href="#adminLoginModal" data-bs-toggle="modal" class="text-muted small text-decoration-none fw-bold"><i class="fas fa-user-shield me-1"></i> Authorized Admin Access</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secure Admin Login Modal -->
+    <div class="modal fade" id="adminLoginModal" tabindex="-1" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow-lg border-top border-dark border-4">
+                <div class="modal-header bg-dark text-white border-0 pb-3">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-shield-alt me-2 text-warning"></i>Admin Portal</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 pt-4">
+                    <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+                        <div class="text-white small fw-bold mb-3 d-none p-2 bg-danger rounded shadow-sm" id="adminLoginError"></div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted">Admin ID</label>
+                            <input type="text" class="form-control" id="adminId" placeholder="System ID" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-muted">Master Password</label>
+                            <input type="password" class="form-control" id="adminSecurityKey" required>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100 fw-bold shadow-sm" id="btnAdminLogin">Authenticate <i class="fas fa-lock ms-1"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Registration Modal -->
+    <div class="modal fade" id="signupModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg border-top border-warning border-4">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-user-plus me-2"></i>Create Account</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="registerForm" onsubmit="handleRegister(event)">
+                        <div class="text-white small fw-bold mb-3 d-none p-2 bg-danger rounded shadow-sm" id="regError"></div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted">Register As <span class="text-danger">*</span></label>
+                            <select class="form-select border-success shadow-none" id="regRole" required>
+                                <option value="farmer">Farmer (Sell & Rent Equip)</option>
+                                <option value="wholesaler">Wholesaler (Buy Bulk)</option>
+                            </select>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold small text-muted">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="regName" placeholder="e.g. Ramesh Kumar" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold small text-muted">City/Location <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="regCity" placeholder="Pune" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold small text-muted">Email Address <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="regEmail" placeholder="abc@email.com" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold small text-muted">Mobile Number <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="regPhone" placeholder="10 Digits" maxlength="10" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-2 mb-4">
+                            <div class="col-6">
+                                <label class="form-label fw-bold small text-muted">Create 4-Digit PIN <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control text-center" style="letter-spacing: 5px;" id="regPin1" placeholder="XXXX" maxlength="4" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold small text-muted">Confirm PIN <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control text-center" style="letter-spacing: 5px;" id="regPin2" placeholder="XXXX" maxlength="4" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning w-100 fw-bold shadow-sm" id="btnRegister">Verify & Register Account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validation logic -->
+    <script>
+        // --- LOGIN VALIDATION & ROUTING ---
+        function handleLogin(e) {
+            e.preventDefault();
+            const role = document.getElementById('loginRole').value;
+            const name = document.getElementById('loginName').value.trim();
+            const pin = document.getElementById('loginPin').value.trim();
+            const err = document.getElementById('loginError');
+            
+            err.classList.add('d-none');
+            
+            // Validation Logic
+            if(name.length < 2) {
+                err.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Name must be at least 2 characters.';
+                err.classList.remove('d-none');
+                return;
+            }
+            if(!/^\d{4}$/.test(pin)) {
+                err.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> PIN must be exactly 4 digits.';
+                err.classList.remove('d-none');
+                return;
+            }
+
+            // Success loading state
+            const btn = document.getElementById('btnLogin');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Authenticating...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                if(role === 'farmer') window.location.href = 'farmer-dashboard.html';
+                else if(role === 'wholesaler') window.location.href = 'wholesaler-dashboard.html';
+            }, 1000);
+        }
+
+        // --- SECURE ADMIN LOGIN LOGIC ---
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const adminId = document.getElementById('adminId').value.trim();
+            const password = document.getElementById('adminSecurityKey').value.trim();
+            const err = document.getElementById('adminLoginError');
+            
+            err.classList.add('d-none');
+            
+            // Hardcoded secure check for prototype
+            if(adminId !== "admin" || password !== "admin123") {
+                err.innerHTML = '<i class="fas fa-ban me-1"></i> Unauthorized credentials.';
+                err.classList.remove('d-none');
+                return;
+            }
+
+            const btn = document.getElementById('btnAdminLogin');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Verifying...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                window.location.href = 'admin/admin-dashboard.html';
+            }, 1200);
+        }
+
+        // --- REGISTRATION VALIDATION & ROUTING ---
+        function handleRegister(e) {
+            e.preventDefault();
+            const role = document.getElementById('regRole').value;
+            const name = document.getElementById('regName').value.trim();
+            const city = document.getElementById('regCity').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const pin1 = document.getElementById('regPin1').value.trim();
+            const pin2 = document.getElementById('regPin2').value.trim();
+            const err = document.getElementById('regError');
+            
+            err.classList.add('d-none');
+
+            // Form validation
+            if(name.length < 3 || city.length < 2) {
+                err.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Name and City are required.';
+                err.classList.remove('d-none'); return;
+            }
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if(!emailPattern.test(email)) {
+                err.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Please enter a valid email address.';
+                err.classList.remove('d-none'); return;
+            }
+            if(!/^\d{10}$/.test(phone)) {
+                err.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Mobile Number must be exactly 10 numeric digits.';
+                err.classList.remove('d-none'); return;
+            }
+            if(!/^\d{4}$/.test(pin1)) {
+                err.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Create PIN must be exactly 4 digits.';
+                err.classList.remove('d-none'); return;
+            }
+            if(pin1 !== pin2) {
+                err.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> The 4-digit PINs do not match.';
+                err.classList.remove('d-none'); return;
+            }
+
+            // Simulate Verification & Registration Flow
+            const btn = document.getElementById('btnRegister');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Verifying Identity...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                // Simulating Success Prompt
+                alert(`SUCCESS! Account safely created for ${name}.\nRedirecting you to the ${role.toUpperCase()} Portal now.`);
+                
+                // Routing Based on Selection
+                if(role === 'farmer') window.location.href = 'farmer-dashboard.html';
+                else if(role === 'wholesaler') window.location.href = 'wholesaler-dashboard.html';
+            }, 1800);
+        }
+    </script>
+
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', 
+                includedLanguages: 'en,hi,te',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

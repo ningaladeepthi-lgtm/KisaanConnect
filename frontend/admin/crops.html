@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Crops - Admin Panel | KisaanConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fa-solid fa-leaf"></i> KisaanConnect</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="users.html" class="nav-item"><i class="fa-solid fa-users"></i> Users</a>
+                <a href="crops.html" class="nav-item active"><i class="fa-solid fa-seedling"></i> Crops</a>
+                <a href="orders.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
+                <a href="return-requests.html" class="nav-item"><i class="fa-solid fa-arrow-rotate-left"></i> Returns</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="search-bar">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search crops...">
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">A</div>
+                    <span style="font-weight: 500;">System Admin</span>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h1 class="page-title">Manage Crops & Listings</h1>
+                    <button class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Crop Category</button>
+                </div>
+
+                <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="stat-card">
+                        <div class="stat-icon primary"><i class="fa-solid fa-seedling"></i></div>
+                        <div class="stat-details">
+                            <h3>Total Listings</h3>
+                            <div class="value">3,892</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon warning"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                        <div class="stat-details">
+                            <h3>Pending Approval</h3>
+                            <div class="value">145</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon danger"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <div class="stat-details">
+                            <h3>Reported Listings</h3>
+                            <div class="value">12</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Recent Crop Listings</h3>
+                        <div class="table-actions">
+                            <select class="btn btn-outline" style="appearance: auto;">
+                                <option value="all">All Categories</option>
+                                <option value="grains">Grains</option>
+                                <option value="vegetables">Vegetables</option>
+                                <option value="fruits">Fruits</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Crop Name</th>
+                                <th>Category</th>
+                                <th>Farmer</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div style="font-weight: 500;">Organic Wheat</div></td>
+                                <td>Grains & Cereals</td>
+                                <td>Ramesh Kumar</td>
+                                <td>₹25/kg</td>
+                                <td>500 kg</td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                                <td>
+                                    <button class="btn btn-outline" title="View"><i class="fa-regular fa-eye"></i></button>
+                                    <button class="btn btn-outline text-danger" title="Delete" style="color: var(--danger);"><i class="fa-regular fa-trash-can"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div style="font-weight: 500;">Fresh Tomatoes</div></td>
+                                <td>Vegetables</td>
+                                <td>Suresh Meena</td>
+                                <td>₹40/kg</td>
+                                <td>200 kg</td>
+                                <td><span class="badge badge-warning">Pending Review</span></td>
+                                <td>
+                                    <button class="btn btn-outline btn-approve" title="Approve" style="color: var(--success);"><i class="fa-solid fa-check"></i></button>
+                                    <button class="btn btn-outline text-danger" title="Reject" style="color: var(--danger);"><i class="fa-solid fa-xmark"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div style="font-weight: 500;">Alphonso Mangoes</div></td>
+                                <td>Fruits</td>
+                                <td>Vinod Farm</td>
+                                <td>₹150/kg</td>
+                                <td>150 kg</td>
+                                <td><span class="badge badge-success">Approved</span></td>
+                                <td>
+                                    <button class="btn btn-outline" title="View"><i class="fa-regular fa-eye"></i></button>
+                                    <button class="btn btn-outline text-danger" title="Delete" style="color: var(--danger);"><i class="fa-regular fa-trash-can"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/admin.js"></script>
+</body>
+</html>

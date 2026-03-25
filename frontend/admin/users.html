@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users - Admin Panel | KisaanConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fa-solid fa-leaf"></i> KisaanConnect</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="users.html" class="nav-item active"><i class="fa-solid fa-users"></i> Users</a>
+                <a href="crops.html" class="nav-item"><i class="fa-solid fa-seedling"></i> Crops</a>
+                <a href="orders.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
+                <a href="return-requests.html" class="nav-item"><i class="fa-solid fa-arrow-rotate-left"></i> Returns</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="search-bar">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search users by name, email or role...">
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">A</div>
+                    <span style="font-weight: 500;">System Admin</span>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h1 class="page-title">Manage Users</h1>
+                    <button class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add New User</button>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>All Users List</h3>
+                        <div class="table-actions">
+                            <select class="btn btn-outline" style="appearance: auto;">
+                                <option value="all">All Roles</option>
+                                <option value="farmer">Farmer</option>
+                                <option value="wholesaler">Wholesaler</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email/Phone</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Joined Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div style="font-weight: 500;">Ramesh Kumar</div></td>
+                                <td>ramesh@example.com<br><small class="text-muted">+91 9876543210</small></td>
+                                <td><span class="badge badge-info">Farmer</span></td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>12 Mar 2026</td>
+                                <td>
+                                    <button class="btn btn-outline" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                                    <button class="btn btn-outline text-danger" title="Suspend" style="color: var(--danger);"><i class="fa-solid fa-ban"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div style="font-weight: 500;">Priya Enterprises</div></td>
+                                <td>contact@priyaent.com<br><small class="text-muted">+91 8765432109</small></td>
+                                <td><span class="badge" style="background-color: #E0E7FF; color: #4338CA;">Wholesaler</span></td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>10 Mar 2026</td>
+                                <td>
+                                    <button class="btn btn-outline" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                                    <button class="btn btn-outline text-danger" title="Suspend" style="color: var(--danger);"><i class="fa-solid fa-ban"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div style="font-weight: 500;">Suresh Meena</div></td>
+                                <td>suresh.m@example.com<br><small class="text-muted">+91 7654321098</small></td>
+                                <td><span class="badge badge-info">Farmer</span></td>
+                                <td><span class="badge badge-danger">Suspended</span></td>
+                                <td>05 Feb 2026</td>
+                                <td>
+                                    <button class="btn btn-outline" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                                    <button class="btn btn-outline" title="Activate" style="color: var(--success);"><i class="fa-solid fa-check"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div style="font-weight: 500;">Deepthi Admin</div></td>
+                                <td>admin@kisaanconnect.com<br><small class="text-muted">+91 9998887776</small></td>
+                                <td><span class="badge badge-warning">Admin</span></td>
+                                <td><span class="badge badge-success">Active</span></td>
+                                <td>01 Jan 2026</td>
+                                <td>
+                                    <button class="btn btn-outline" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/admin.js"></script>
+</body>
+</html>

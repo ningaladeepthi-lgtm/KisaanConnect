@@ -6,13 +6,13 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-"postinstall": "npm rebuild sqlite3"
+    "postinstall": "npm rebuild better-sqlite3"
   },
   "dependencies": {
+    "better-sqlite3": "^12.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "sequelize": "^6.37.3",
-    "sqlite3": "^6.0.1"
+    "sequelize": "^6.37.3"
   }
 }
